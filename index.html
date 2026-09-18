@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MR APK BAZAR — Premium Android App Marketplace</title>
+<meta name="description" content="MR APK BAZAR — a premium marketplace for discovering and downloading Android apps.">
+<meta name="theme-color" content="#0A0A10">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23151022'/%3E%3Cpath d='M30 68 L50 26 L70 68 M38 54 H62' stroke='%238B6CFF' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="boot"><div class="boot-mark"></div></div>
+
+<!-- ============ WELCOME / AUTH ============ -->
+<div id="welcome" style="display:none;">
+  <div class="welcome-content">
+    <div class="welcome-mark">
+      <svg viewBox="0 0 100 100" fill="none"><path d="M30 68 L50 26 L70 68 M38 54 H62" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <h1 class="welcome-title">MR APK BAZAR</h1>
+    <p class="welcome-tagline">Discover and download Android apps, curated in one premium marketplace.</p>
+
+    <div class="auth-stack" id="auth-buttons">
+      <button class="btn btn-primary btn-block" id="btn-google">
+        <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.5 6 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.7 18.9 13 24 13c3.1 0 5.8 1.1 8 3l5.7-5.7C34.5 6.7 29.5 4.5 24 4.5c-7.4 0-13.8 4.2-17.7 10.2z"/><path fill="#4CAF50" d="M24 44c5.4 0 10.3-2.1 14-5.4l-6.5-5.5c-2 1.5-4.6 2.4-7.5 2.4-5.3 0-9.7-3.4-11.3-8.1l-6.6 5.1C9.9 39.6 16.4 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.5l6.5 5.5C40.9 36.4 44 30.7 44 24c0-1.2-.1-2.3-.4-3.5z"/></svg>
+        Continue with Google
+      </button>
+      <button class="btn btn-ghost btn-block" id="btn-email">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+        Sign in with Email
+      </button>
+    </div>
+
+    <div id="email-panel">
+      <div class="field"><label for="email-input">Email</label><input id="email-input" type="email" autocomplete="email" placeholder="you@example.com"></div>
+      <div class="field"><label for="pass-input">Password</label><input id="pass-input" type="password" autocomplete="current-password" placeholder="••••••••"></div>
+      <div class="auth-error" id="email-error"></div>
+      <button class="btn btn-primary btn-block" id="btn-email-submit">Sign In</button>
+      <div class="mode-toggle" id="email-mode-toggle">Don't have an account? <button id="btn-toggle-signup">Create one</button></div>
+      <button class="btn btn-ghost btn-block btn-sm" id="btn-email-back" style="margin-top:6px;">Back</button>
+    </div>
+
+    <a class="guest-link" href="#" id="btn-guest">Continue as Guest →</a>
+    <p class="welcome-legal">By continuing you agree to our <a href="#" data-page="terms">Terms</a> and <a href="#" data-page="privacy">Privacy Policy</a>.</p>
+  </div>
+</div>
+
+<!-- ============ APP SHELL ============ -->
+<div id="app">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark"><svg viewBox="0 0 100 100" fill="none"><path d="M30 68 L50 26 L70 68 M38 54 H62" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        MR APK BAZAR
+      </div>
+      <nav class="desktop-nav" id="desktop-nav">
+        <a href="#" data-view="home" class="active">Home</a>
+        <a href="#" data-view="categories">Categories</a>
+        <a href="#" data-view="downloads">My Downloads</a>
+      </nav>
+      <div class="topbar-spacer"></div>
+      <button class="icon-btn" id="btn-refresh" aria-label="Refresh">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v6h-6"/></svg>
+      </button>
+      <button class="avatar-btn" id="btn-profile" aria-label="Profile"></button>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- HOME VIEW -->
+    <section class="page-view show" id="view-home">
+      <div class="hero">
+        <div class="hero-card">
+          <div class="hero-eyebrow-free">Curated for Android</div>
+          <h1>Everything worth installing, in one place.</h1>
+          <p>Browse, preview, and download apps built for real everyday use.</p>
+        </div>
+      </div>
+
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input class="search-input" id="search-input" placeholder="Search apps, categories..." aria-label="Search apps">
+        <button class="search-clear" id="search-clear" aria-label="Clear search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div id="search-results-wrap" style="display:none;">
+        <div class="section-head"><h2>Search results</h2></div>
+        <div class="grid" id="search-results"></div>
+      </div>
+
+      <div id="home-sections">
+        <div class="chip-row" id="chip-row"></div>
+
+        <div class="section"><div class="section-head"><h2>Featured</h2></div><div class="rail" id="rail-featured"></div></div>
+        <div class="section"><div class="section-head"><h2>New Apps</h2></div><div class="rail" id="rail-new"></div></div>
+        <div class="section"><div class="section-head"><h2>Recently Updated</h2></div><div class="rail" id="rail-updated"></div></div>
+        <div class="section"><div class="section-head"><h2>Trending</h2></div><div class="rail" id="rail-trending"></div></div>
+        <div class="section"><div class="section-head"><h2>All Apps</h2></div><div class="grid" id="grid-all"></div></div>
+      </div>
+    </section>
+
+    <!-- CATEGORIES VIEW -->
+    <section class="page-view" id="view-categories">
+      <h1 style="font-size:1.3rem;margin:22px 0 16px;">Categories</h1>
+      <div class="chip-row" id="chip-row-2" style="margin-bottom:18px;"></div>
+      <div class="grid" id="grid-categories"></div>
+    </section>
+
+    <!-- DOWNLOADS VIEW -->
+    <section class="page-view" id="view-downloads">
+      <h1 style="font-size:1.3rem;margin:22px 0 16px;">My Downloads</h1>
+      <div id="downloads-list"></div>
+    </section>
+
+    <!-- PROFILE VIEW -->
+    <section class="page-view" id="view-profile">
+      <div style="margin:22px 0 16px;"></div>
+      <div class="profile-card" id="profile-card"></div>
+      <div class="menu-list" id="profile-menu"></div>
+    </section>
+
+    <!-- STATIC PAGES -->
+    <section class="page-view" id="view-privacy">
+      <a href="#" class="page-back" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>Back</a>
+      <h1>Privacy Policy</h1>
+      <p>MR APK BAZAR ("we", "the app") respects your privacy. This policy explains what information we collect and how it is used.</p>
+      <h3>Information we collect</h3>
+      <ul>
+        <li>Account information from Google Sign-In or email/password authentication (name, email, profile photo).</li>
+        <li>Download history tied to your account: app name, version, and timestamp.</li>
+        <li>Basic usage analytics such as app views and download events, used to improve the catalog.</li>
+        <li>Local storage / cookies used only to keep you signed in and remember interface preferences.</li>
+      </ul>
+      <h3>How we use Firebase</h3>
+      <p>Authentication and data storage are provided by Firebase (Google). Firebase's own privacy practices apply to the underlying infrastructure.</p>
+      <h3>How information is used</h3>
+      <p>We use your data to operate your account, show your download history, and understand which apps are useful to visitors. We do not sell personal data to third parties.</p>
+      <h3>Data security</h3>
+      <p>Access to your account data is restricted to your authenticated session through Firebase security rules. No system is perfectly secure, and we encourage using a strong, unique password.</p>
+      <h3>Third-party services</h3>
+      <p>Downloaded apps are third-party software. We are not responsible for the privacy practices of the app developers themselves.</p>
+      <h3>Your rights</h3>
+      <p>You may request deletion of your account and associated data at any time by contacting us at the address on our Contact page.</p>
+      <p style="margin-top:16px;color:var(--text-faint);">[Company/owner legal name and address placeholder] — Last updated: <span id="privacy-date"></span></p>
+    </section>
+
+    <section class="page-view" id="view-terms">
+      <a href="#" class="page-back" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>Back</a>
+      <h1>Terms of Service</h1>
+      <h3>Using MR APK BAZAR</h3>
+      <p>By using this website you agree to browse and download apps for personal, lawful use only.</p>
+      <h3>Accounts</h3>
+      <p>You are responsible for keeping your account credentials secure and for activity that happens under your account.</p>
+      <h3>Downloads and third-party apps</h3>
+      <p>Apps listed here are provided by third-party developers. We do not guarantee the performance, safety, or suitability of any app for your device, and installing any app is at your own discretion.</p>
+      <h3>Intellectual property</h3>
+      <p>App names, icons, and descriptions belong to their respective developers. The MR APK BAZAR brand, layout, and original content belong to us.</p>
+      <h3>Availability</h3>
+      <p>We may update, suspend, or discontinue parts of the service at any time without notice.</p>
+      <h3>Limitation of liability</h3>
+      <p>MR APK BAZAR is provided "as is" without warranties of any kind. We are not liable for damages arising from use of apps downloaded through the site.</p>
+      <h3>Contact</h3>
+      <p>Questions about these terms can be sent through our Contact page.</p>
+    </section>
+
+    <section class="page-view" id="view-about">
+      <a href="#" class="page-back" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>Back</a>
+      <h1>About MR APK BAZAR</h1>
+      <p>MR APK BAZAR is a marketplace for discovering Android apps — browse by category, preview screenshots and details, and download what's useful to you.</p>
+      <h3>What you'll find here</h3>
+      <p>A growing catalog of apps with clear version history, update notes, and installation instructions, kept current through our Firebase-backed catalog.</p>
+      <h3>Contact</h3>
+      <p>[Contact email placeholder] — see the Contact page for more ways to reach us.</p>
+      <p style="margin-top:10px;color:var(--text-faint);">Site version 1.0</p>
+    </section>
+
+    <section class="page-view" id="view-contact">
+      <a href="#" class="page-back" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>Back</a>
+      <h1>Contact</h1>
+      <p>Reach us through any of the channels below.</p>
+      <div class="menu-list" style="margin-top:16px;">
+        <div class="menu-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg> [Email placeholder]</div>
+        <div class="menu-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z"/></svg> [Telegram placeholder]</div>
+        <div class="menu-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"/></svg> [WhatsApp placeholder]</div>
+        <div class="menu-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/></svg> [Facebook placeholder]</div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer container">
+    <div class="brand" style="font-size:0.95rem;">MR APK BAZAR</div>
+    <p style="margin-top:6px;color:var(--text-dim);font-size:0.85rem;">Premium Android App Marketplace</p>
+    <div class="footer-links">
+      <a href="#" data-view="home">Home</a>
+      <a href="#" data-view="categories">Categories</a>
+      <a href="#" data-page="privacy">Privacy Policy</a>
+      <a href="#" data-page="terms">Terms of Service</a>
+      <a href="#" data-page="about">About</a>
+      <a href="#" data-page="contact">Contact</a>
+    </div>
+    <p>© <span id="year"></span> MR APK BAZAR. All rights reserved.</p>
+  </footer>
+
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-view="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Home</button>
+    <button class="nav-item" data-view="categories"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Categories</button>
+    <button class="nav-item" id="nav-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>Search</button>
+    <button class="nav-item" data-view="downloads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>Downloads</button>
+    <button class="nav-item" data-view="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4.5 5-6 8-6s6.5 1.5 8 6"/></svg>Profile</button>
+  </nav>
+</div>
+
+<!-- ============ APP DETAIL SHEET ============ -->
+<div class="overlay" id="detail-overlay"></div>
+<div class="sheet" id="detail-sheet" role="dialog" aria-modal="true" aria-label="App details">
+  <div class="sheet-handle"></div>
+  <button class="icon-btn sheet-close" id="detail-close" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  <div class="sheet-scroll" id="detail-content"></div>
+</div>
+
+<!-- ============ LOGIN GATE MODAL ============ -->
+<div class="overlay" id="gate-overlay"></div>
+<div class="gate-modal" id="gate-modal" role="dialog" aria-modal="true">
+  <div class="gate-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+  <h3>Sign in to download</h3>
+  <p>Create a free account or continue with Google to download apps from MR APK BAZAR.</p>
+  <div class="auth-stack">
+    <button class="btn btn-primary btn-block" id="gate-google">
+      <svg viewBox="0 0 48 48" width="19" height="19"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.5 6 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.7 18.9 13 24 13c3.1 0 5.8 1.1 8 3l5.7-5.7C34.5 6.7 29.5 4.5 24 4.5c-7.4 0-13.8 4.2-17.7 10.2z"/><path fill="#4CAF50" d="M24 44c5.4 0 10.3-2.1 14-5.4l-6.5-5.5c-2 1.5-4.6 2.4-7.5 2.4-5.3 0-9.7-3.4-11.3-8.1l-6.6 5.1C9.9 39.6 16.4 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.5l6.5 5.5C40.9 36.4 44 30.7 44 24c0-1.2-.1-2.3-.4-3.5z"/></svg>
+      Continue with Google
+    </button>
+    <button class="btn btn-ghost btn-block" id="gate-email">Sign in with Email</button>
+    <button class="btn btn-ghost btn-block btn-sm" id="gate-cancel">Cancel</button>
+  </div>
+</div>
+
+<div id="toast-host"></div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
