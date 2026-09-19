@@ -39,7 +39,8 @@ const state = {
   customPhotoURL: null,  // ImgBB-hosted profile photo, takes priority over Google's photoURL
   photoUploading: false,
   isBlocked: false,       // set by admin — blocks downloads only, browsing still allowed
-  currentView: "home"     // tracked so switchView() doesn't push duplicate history entries
+  currentView: "home",    // tracked so switchView() doesn't push duplicate history entries
+  detailApp: null         // which app the (static) detail-sheet download button currently targets
 };
 function getAvatarUrl(){
   return state.customPhotoURL || (state.user && state.user.photoURL) || null;
@@ -490,22 +491,38 @@ function openDetail(id){
     ${shots.length ? `<div class="detail-section"><h4>Screenshots</h4><div class="shots-row">${shots.map(s=>`<img src="${escapeHtml(s)}" alt="" loading="lazy">`).join("")}</div></div>` : ""}
     ${app.updateNotes ? `<div class="detail-section"><h4>What's new</h4><p>${escapeHtml(app.updateNotes)}</p></div>` : ""}
     ${app.instructions ? `<div class="detail-section"><h4>Instructions</h4><p>${escapeHtml(app.instructions)}</p></div>` : ""}
-    <div class="detail-dl-bar">
-      <button class="btn btn-primary btn-block" id="detail-dl-btn">
-        ${dlIconSvg(getDownloadMeta(app).type)}
-        ${escapeHtml(getDownloadMeta(app).label)}
-      </button>
-    </div>
   `;
-  $("#detail-dl-btn").addEventListener("click", ()=> requestDownload(app));
+  // the ad + download button live in a static bar outside #detail-content
+  // (script tags inside innerHTML never execute, so the ad has to sit in
+  // real, static HTML) — just update its label/icon and which app it targets
+  state.detailApp = app;
+  const meta = getDownloadMeta(app);
+  $("#detail-dl-btn").innerHTML = `${dlIconSvg(meta.type)} ${escapeHtml(meta.label)}`;
   $("#detail-overlay").classList.add("show");
   $("#detail-sheet").classList.add("show");
   history.pushState({type:"overlay", overlay:"detail"}, "", location.href);
 }
+$("#detail-dl-btn").addEventListener("click", ()=>{ if(state.detailApp) requestDownload(state.detailApp); });
 $("#detail-close").addEventListener("click", ()=> history.back());
 $("#detail-overlay").addEventListener("click", ()=> history.back());
 
 /* ===================== DOWNLOAD FLOW ===================== */
+
+/* ---- Adsterra Smartlink ----
+   Opens every 3rd download-button click (not every click), so it rides the
+   same user-gesture as the click (popup blockers allow it) without being
+   naggy on every single tap. */
+const SMARTLINK_URL = "https://www.profitableratecpmnetwork.com/khhb0sxa?key=a5b50548384953d1a4866f2b52283023";
+function maybeOpenSmartlink(){
+  try{
+    const count = (parseInt(localStorage.getItem("mrapk_dl_click_count") || "0", 10) + 1) % Number.MAX_SAFE_INTEGER;
+    localStorage.setItem("mrapk_dl_click_count", String(count));
+    if(count % 3 === 0){
+      window.open(SMARTLINK_URL, "_blank", "noopener");
+    }
+  }catch(e){ /* localStorage may be unavailable in some webviews — skip silently */ }
+}
+
 function requestDownload(app){
   if(state.isGuest || !state.user){
     openGate(app);
@@ -515,6 +532,7 @@ function requestDownload(app){
     toast("Downloads are currently disabled for your account. Please contact support.", "error");
     return;
   }
+  maybeOpenSmartlink();
   startDownload(app);
 }
 

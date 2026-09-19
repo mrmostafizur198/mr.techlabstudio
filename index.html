@@ -15,6 +15,12 @@
 </head>
 <body>
 
+<!-- =========================================================
+     ADS (Adsterra) — self-rendering, site-wide, loaded once.
+     ========================================================= -->
+<script src="https://pl31405166.profitableratecpmnetwork.com/f6/57/db/f657db1113a6bcf4fab49d073628017e.js"></script> <!-- popunder -->
+<script src="https://pl31405461.profitableratecpmnetwork.com/0c/64/3e/0c643e1b095de2862201f38c0ba23e36.js"></script> <!-- social bar -->
+
 <div id="boot"><div class="boot-mark"></div></div>
 
 <!-- ============ WELCOME / AUTH ============ -->
@@ -73,6 +79,15 @@
   </header>
 
   <main class="container">
+
+    <!-- Adsterra native banner — placed once, outside every individual
+         page-view section, so it stays visible no matter which page
+         (Home/Categories/Downloads/Profile/etc.) is currently shown. -->
+    <div class="native-ad-slot">
+      <span class="native-ad-label">Sponsored</span>
+      <script async="async" data-cfasync="false" src="https://pl31405462.profitableratecpmnetwork.com/0a1073280d0977a6f3f56e3393d8b4bd/invoke.js"></script>
+      <div id="container-0a1073280d0977a6f3f56e3393d8b4bd"></div>
+    </div>
 
     <!-- HOME VIEW -->
     <section class="page-view show" id="view-home">
@@ -211,6 +226,20 @@
     <p>© <span id="year"></span> MR APK BAZAR. All rights reserved.</p>
   </footer>
 
+  <!-- Adsterra 320x50 banner — fixed, shown on every page -->
+  <div class="ad-banner-bar">
+    <script type="text/javascript">
+      atOptions = {
+        'key' : 'c3447406b11d1c33694b3121ea2b21f0',
+        'format' : 'iframe',
+        'height' : 50,
+        'width' : 320,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highrevenueformat.com/c3447406b11d1c33694b3121ea2b21f0/invoke.js"></script>
+  </div>
+
   <nav class="bottom-nav">
     <button class="nav-item active" data-view="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Home</button>
     <button class="nav-item" data-view="categories"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Categories</button>
@@ -226,6 +255,26 @@
   <div class="sheet-handle"></div>
   <button class="icon-btn sheet-close" id="detail-close" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
   <div class="sheet-scroll" id="detail-content"></div>
+
+  <!-- Static footer: script tags inside #detail-content's innerHTML never
+       execute, so the ad + its container has to live here instead. The
+       button's label/icon and target app are updated by openDetail(). -->
+  <div class="detail-dl-bar">
+    <div class="detail-ad-slot">
+      <span class="native-ad-label">Sponsored</span>
+      <script type="text/javascript">
+        atOptions = {
+          'key' : '43c3fd7befc662a9e6392fec3dd3b7ce',
+          'format' : 'iframe',
+          'height' : 250,
+          'width' : 300,
+          'params' : {}
+        };
+      </script>
+      <script src="https://www.highrevenueformat.com/43c3fd7befc662a9e6392fec3dd3b7ce/invoke.js"></script>
+    </div>
+    <button class="btn btn-primary btn-block" id="detail-dl-btn"></button>
+  </div>
 </div>
 
 <!-- ============ LOGIN GATE MODAL ============ -->
