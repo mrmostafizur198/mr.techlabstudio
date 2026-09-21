@@ -1,5 +1,5 @@
 /* =========================================================
-   MR APK BAZAR — PREMIUM DARK MARKETPLACE
+   Mr Techlab Studio — PREMIUM DARK MARKETPLACE
    Clear Background Artwork + Highlighted Download Buttons
    ========================================================= */
 
@@ -74,6 +74,11 @@ body{
   -moz-user-select:none;
   user-select:none;
   -webkit-touch-callout:none;
+}
+
+/* locks the home page from scrolling underneath an open sheet (App Detail) */
+body.sheet-open{
+  overflow:hidden;
 }
 
 /* inputs must stay normally selectable/editable */
@@ -1454,6 +1459,78 @@ body::after{
 
 
 /* =========================================================
+   HOST CARDS (Host page — resource/link cards from admin)
+   ========================================================= */
+.grid.host-grid,
+.grid.prompt-grid{
+  grid-template-columns:1fr; /* big single-column cards, not the 2/3/4-col app grid — higher specificity so it beats the responsive .grid media queries */
+}
+.host-card{
+  position:relative;
+  border-radius:var(--radius-m);
+  border:1px solid var(--border-soft);
+  background:var(--surface);
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.host-card-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.host-card-logo{
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  object-fit:cover;
+  background:var(--surface-2);
+  border:1px solid var(--border-soft);
+  flex-shrink:0;
+}
+.host-card-logo-fallback{
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  background:linear-gradient(140deg,var(--accent-2),var(--accent));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:var(--font-display);
+  font-weight:700;
+  color:#fff;
+  font-size:1rem;
+  flex-shrink:0;
+}
+.host-card-name{
+  font-size:0.95rem;
+  font-weight:600;
+  line-height:1.3;
+}
+.host-card-desc{
+  font-size:0.82rem;
+  color:var(--text-dim);
+  line-height:1.55;
+  display:-webkit-box;
+  -webkit-line-clamp:4;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.host-card-actions{
+  display:flex;
+  gap:8px;
+  margin-top:auto;
+  padding-top:4px;
+}
+.host-card-actions .btn{
+  flex:1;
+  padding:9px 10px;
+  font-size:0.78rem;
+}
+
+
+/* =========================================================
    SKELETON
    ========================================================= */
 
@@ -1859,13 +1936,11 @@ body::after{
 }
 
 .detail-dl-bar{
-  flex-shrink:0;
-
-  background:var(--surface);
+  margin-top:8px;
 
   padding:
     14px
-    20px
+    0
     calc(14px + var(--safe-bottom));
 
   border-top:
@@ -2336,8 +2411,8 @@ body::after{
 }
 
 .boot-mark{
-  width:52px;
-  height:52px;
+  width:200px;
+  height:200px;
 
   border-radius:16px;
 

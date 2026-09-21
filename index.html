@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>MR APK BAZAR — Premium Android App Marketplace</title>
-<meta name="description" content="MR APK BAZAR — a premium marketplace for discovering and downloading Android apps.">
+<title>Mr Techlab Studio — Premium Android App Marketplace</title>
+<meta name="description" content="Mr Techlab Studio — a premium marketplace for discovering and downloading Android apps.">
 <meta name="theme-color" content="#0A0A10">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23151022'/%3E%3Cpath d='M30 68 L50 26 L70 68 M38 54 H62' stroke='%238B6CFF' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" id="favicon-link" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23151022'/%3E%3Cpath d='M30 68 L50 26 L70 68 M38 54 H62' stroke='%238B6CFF' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -21,15 +21,15 @@
 <script src="https://pl31405166.profitableratecpmnetwork.com/f6/57/db/f657db1113a6bcf4fab49d073628017e.js"></script> <!-- popunder -->
 <script src="https://pl31405461.profitableratecpmnetwork.com/0c/64/3e/0c643e1b095de2862201f38c0ba23e36.js"></script> <!-- social bar -->
 
-<div id="boot"><div class="boot-mark"></div></div>
+<div id="boot"><div class="boot-mark"><img src="logo.png"></div></div>
 
 <!-- ============ WELCOME / AUTH ============ -->
 <div id="welcome" style="display:none;">
   <div class="welcome-content">
-    <div class="welcome-mark">
+    <div class="welcome-mark" id="welcome-mark">
       <svg viewBox="0 0 100 100" fill="none"><path d="M30 68 L50 26 L70 68 M38 54 H62" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </div>
-    <h1 class="welcome-title">MR APK BAZAR</h1>
+    <h1 class="welcome-title">Mr Techlab Studio</h1>
     <p class="welcome-tagline">Discover and download Android apps, curated in one premium marketplace.</p>
 
     <div class="auth-stack" id="auth-buttons">
@@ -62,12 +62,13 @@
   <header class="topbar">
     <div class="topbar-inner">
       <div class="brand">
-        <div class="brand-mark"><svg viewBox="0 0 100 100" fill="none"><path d="M30 68 L50 26 L70 68 M38 54 H62" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        MR APK BAZAR
+        <div class="brand-mark" id="topbar-mark"><svg viewBox="0 0 100 100" fill="none"><path d="M30 68 L50 26 L70 68 M38 54 H62" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        Mr Techlab Studio
       </div>
       <nav class="desktop-nav" id="desktop-nav">
         <a href="#" data-view="home" class="active">Home</a>
-        <a href="#" data-view="categories">Categories</a>
+        <a href="#" data-view="host">Host</a>
+        <a href="#" data-view="prompts">Prompts</a>
         <a href="#" data-view="downloads">My Downloads</a>
       </nav>
       <div class="topbar-spacer"></div>
@@ -123,6 +124,20 @@
       </div>
     </section>
 
+    <!-- HOST VIEW -->
+    <section class="page-view" id="view-host">
+      <h1 style="font-size:1.3rem;margin:22px 0 6px;">Host</h1>
+      <p style="color:var(--text-dim);font-size:0.86rem;margin-bottom:18px;">Useful links for hosting your app, Firebase, and app-posting resources — curated by the team.</p>
+      <div class="grid host-grid" id="host-grid"></div>
+    </section>
+
+    <!-- PROMPTS VIEW -->
+    <section class="page-view" id="view-prompts">
+      <h1 style="font-size:1.3rem;margin:22px 0 6px;">Prompts</h1>
+      <p style="color:var(--text-dim);font-size:0.86rem;margin-bottom:18px;">Ready-to-use prompts — tap Copy to grab one.</p>
+      <div class="grid prompt-grid" id="prompt-grid"></div>
+    </section>
+
     <!-- CATEGORIES VIEW -->
     <section class="page-view" id="view-categories">
       <h1 style="font-size:1.3rem;margin:22px 0 16px;">Categories</h1>
@@ -147,7 +162,7 @@
     <section class="page-view" id="view-privacy">
       <a href="#" class="page-back" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>Back</a>
       <h1>Privacy Policy</h1>
-      <p>MR APK BAZAR ("we", "the app") respects your privacy. This policy explains what information we collect and how it is used.</p>
+      <p>Mr Techlab Studio ("we", "the app") respects your privacy. This policy explains what information we collect and how it is used.</p>
       <h3>Information we collect</h3>
       <ul>
         <li>Account information from Google Sign-In or email/password authentication (name, email, profile photo).</li>
@@ -171,26 +186,26 @@
     <section class="page-view" id="view-terms">
       <a href="#" class="page-back" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>Back</a>
       <h1>Terms of Service</h1>
-      <h3>Using MR APK BAZAR</h3>
+      <h3>Using Mr Techlab Studio</h3>
       <p>By using this website you agree to browse and download apps for personal, lawful use only.</p>
       <h3>Accounts</h3>
       <p>You are responsible for keeping your account credentials secure and for activity that happens under your account.</p>
       <h3>Downloads and third-party apps</h3>
       <p>Apps listed here are provided by third-party developers. We do not guarantee the performance, safety, or suitability of any app for your device, and installing any app is at your own discretion.</p>
       <h3>Intellectual property</h3>
-      <p>App names, icons, and descriptions belong to their respective developers. The MR APK BAZAR brand, layout, and original content belong to us.</p>
+      <p>App names, icons, and descriptions belong to their respective developers. The Mr Techlab Studio brand, layout, and original content belong to us.</p>
       <h3>Availability</h3>
       <p>We may update, suspend, or discontinue parts of the service at any time without notice.</p>
       <h3>Limitation of liability</h3>
-      <p>MR APK BAZAR is provided "as is" without warranties of any kind. We are not liable for damages arising from use of apps downloaded through the site.</p>
+      <p>Mr Techlab Studio is provided "as is" without warranties of any kind. We are not liable for damages arising from use of apps downloaded through the site.</p>
       <h3>Contact</h3>
       <p>Questions about these terms can be sent through our Contact page.</p>
     </section>
 
     <section class="page-view" id="view-about">
       <a href="#" class="page-back" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>Back</a>
-      <h1>About MR APK BAZAR</h1>
-      <p>MR APK BAZAR is a marketplace for discovering Android apps — browse by category, preview screenshots and details, and download what's useful to you.</p>
+      <h1>About Mr Techlab Studio</h1>
+      <p>Mr Techlab Studio is a marketplace for discovering Android apps — browse by category, preview screenshots and details, and download what's useful to you.</p>
       <h3>What you'll find here</h3>
       <p>A growing catalog of apps with clear version history, update notes, and installation instructions, kept current through our Firebase-backed catalog.</p>
       <h3>Contact</h3>
@@ -213,17 +228,18 @@
   </main>
 
   <footer class="footer container">
-    <div class="brand" style="font-size:0.95rem;">MR APK BAZAR</div>
+    <div class="brand" style="font-size:0.95rem;">Mr Techlab Studio</div>
     <p style="margin-top:6px;color:var(--text-dim);font-size:0.85rem;">Premium Android App Marketplace</p>
     <div class="footer-links">
       <a href="#" data-view="home">Home</a>
-      <a href="#" data-view="categories">Categories</a>
+      <a href="#" data-view="host">Host</a>
+      <a href="#" data-view="prompts">Prompts</a>
       <a href="#" data-page="privacy">Privacy Policy</a>
       <a href="#" data-page="terms">Terms of Service</a>
       <a href="#" data-page="about">About</a>
       <a href="#" data-page="contact">Contact</a>
     </div>
-    <p>© <span id="year"></span> MR APK BAZAR. All rights reserved.</p>
+    <p>© <span id="year"></span> Mr Techlab Studio. All rights reserved.</p>
   </footer>
 
   <!-- Adsterra 320x50 banner — fixed, shown on every page -->
@@ -242,7 +258,7 @@
 
   <nav class="bottom-nav">
     <button class="nav-item active" data-view="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Home</button>
-    <button class="nav-item" data-view="categories"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Categories</button>
+    <button class="nav-item" data-view="host"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><circle cx="7" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="7" cy="17" r="1" fill="currentColor" stroke="none"/></svg>Host</button>
     <button class="nav-item" id="nav-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>Search</button>
     <button class="nav-item" data-view="downloads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>Downloads</button>
     <button class="nav-item" data-view="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4.5 5-6 8-6s6.5 1.5 8 6"/></svg>Profile</button>
@@ -254,26 +270,31 @@
 <div class="sheet" id="detail-sheet" role="dialog" aria-modal="true" aria-label="App details">
   <div class="sheet-handle"></div>
   <button class="icon-btn sheet-close" id="detail-close" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-  <div class="sheet-scroll" id="detail-content"></div>
+  <div class="sheet-scroll">
+    <div id="detail-content"></div>
 
-  <!-- Static footer: script tags inside #detail-content's innerHTML never
-       execute, so the ad + its container has to live here instead. The
-       button's label/icon and target app are updated by openDetail(). -->
-  <div class="detail-dl-bar">
-    <div class="detail-ad-slot">
-      <span class="native-ad-label">Sponsored</span>
-      <script type="text/javascript">
-        atOptions = {
-          'key' : '43c3fd7befc662a9e6392fec3dd3b7ce',
-          'format' : 'iframe',
-          'height' : 250,
-          'width' : 300,
-          'params' : {}
-        };
-      </script>
-      <script src="https://www.highrevenueformat.com/43c3fd7befc662a9e6392fec3dd3b7ce/invoke.js"></script>
+    <!-- Static: script tags inside #detail-content's innerHTML never
+         execute, so the ad + its container has to live here instead. It's
+         still inside the same scrolling area as the description now, so it
+         sits at the very bottom — scroll down to reach it — instead of
+         staying pinned on screen. The button's label/icon and target app
+         are updated by openDetail(). -->
+    <div class="detail-dl-bar">
+      <div class="detail-ad-slot">
+        <span class="native-ad-label">Sponsored</span>
+        <script type="text/javascript">
+          atOptions = {
+            'key' : '43c3fd7befc662a9e6392fec3dd3b7ce',
+            'format' : 'iframe',
+            'height' : 250,
+            'width' : 300,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/43c3fd7befc662a9e6392fec3dd3b7ce/invoke.js"></script>
+      </div>
+      <button class="btn btn-primary btn-block" id="detail-dl-btn"></button>
     </div>
-    <button class="btn btn-primary btn-block" id="detail-dl-btn"></button>
   </div>
 </div>
 
@@ -282,7 +303,7 @@
 <div class="gate-modal" id="gate-modal" role="dialog" aria-modal="true">
   <div class="gate-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
   <h3>Sign in to download</h3>
-  <p>Create a free account or continue with Google to download apps from MR APK BAZAR.</p>
+  <p>Create a free account or continue with Google to download apps from Mr Techlab Studio.</p>
   <div class="auth-stack">
     <button class="btn btn-primary btn-block" id="gate-google">
       <svg viewBox="0 0 48 48" width="19" height="19"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.5 6 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.7 18.9 13 24 13c3.1 0 5.8 1.1 8 3l5.7-5.7C34.5 6.7 29.5 4.5 24 4.5c-7.4 0-13.8 4.2-17.7 10.2z"/><path fill="#4CAF50" d="M24 44c5.4 0 10.3-2.1 14-5.4l-6.5-5.5c-2 1.5-4.6 2.4-7.5 2.4-5.3 0-9.7-3.4-11.3-8.1l-6.6 5.1C9.9 39.6 16.4 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.5l6.5 5.5C40.9 36.4 44 30.7 44 24c0-1.2-.1-2.3-.4-3.5z"/></svg>

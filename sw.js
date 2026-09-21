@@ -1,5 +1,5 @@
 /*
-  MR APK BAZAR — service worker (structure only, not yet registered from index.html).
+  Mr Techlab Studio — service worker (structure only, not yet registered from index.html).
   Kept intentionally minimal: caches only the static app shell, never app/catalog data
   (which must always come fresh from Firebase). To activate, register it from index.html:
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');

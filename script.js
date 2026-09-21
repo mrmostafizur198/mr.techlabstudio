@@ -30,10 +30,14 @@ const IMGBB_API_KEY = "YOUR_IMGBB_API_KEY";
 const state = {
   user: null,           // firebase user or null
   isGuest: false,
-  settings: { siteName: "MR APK BAZAR", tagline: "Premium Android App Marketplace", logoUrl: "" },
+  settings: { siteName: "Mr Techlab Studio", tagline: "Premium Android App Marketplace", logoUrl: "" },
   apps: [],              // array of {id, ...fields}
   categories: [],
   activeCategory: "all",
+  hostLinks: [],
+  hostLoaded: false,
+  prompts: [],
+  promptsLoaded: false,
   pendingDownload: null, // app object waiting on auth
   downloadInFlight: false,
   customPhotoURL: null,  // ImgBB-hosted profile photo, takes priority over Google's photoURL
@@ -191,6 +195,7 @@ function openGate(app){
 
 onAuthStateChanged(auth, (user)=>{
   state.user = user;
+  resolveBoot(user);
   if(user){
     state.isGuest = false;
     $("#welcome").style.display = "none";
@@ -269,7 +274,7 @@ async function loadCatalog(){
     ]);
     if(settingsSnap.exists()){
       const s = settingsSnap.val();
-      state.settings = { siteName: s.siteName || "MR APK BAZAR", tagline: s.tagline || "Premium Android App Marketplace", logoUrl: s.logoUrl || "" };
+      state.settings = { siteName: s.siteName || "Mr Techlab Studio", tagline: s.tagline || "Premium Android App Marketplace", logoUrl: s.logoUrl || "" };
     }
     applySettingsToUI();
 
@@ -293,6 +298,31 @@ async function loadCatalog(){
 function applySettingsToUI(){
   document.title = state.settings.siteName + " — Premium Android App Marketplace";
   $$(".brand").forEach(el=>{ if(!el.closest("#welcome")) el.lastChild.textContent = " " + state.settings.siteName; });
+  setBrandMark("#topbar-mark", state.settings.logoUrl);
+  setBrandMark("#welcome-mark", state.settings.logoUrl);
+  if(state.settings.logoUrl){
+    const fav = $("#favicon-link");
+    if(fav) fav.href = state.settings.logoUrl; // browser tab icon too
+  }
+}
+
+const DEFAULT_MARK_SVG = '<svg viewBox="0 0 100 100" fill="none"><path d="M30 68 L50 26 L70 68 M38 54 H62" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+// swaps the built-in mountain-icon mark for the logo set on the admin
+// Settings page (falls back to the default icon if empty or broken)
+function setBrandMark(selector, logoUrl){
+  const el = $(selector);
+  if(!el) return;
+  if(!logoUrl){
+    if(!el.querySelector("svg")) el.innerHTML = DEFAULT_MARK_SVG;
+    return;
+  }
+  const img = document.createElement("img");
+  img.src = logoUrl;
+  img.alt = "";
+  img.style.cssText = "width:100%;height:100%;object-fit:cover;border-radius:inherit;";
+  img.onerror = ()=>{ el.innerHTML = DEFAULT_MARK_SVG; };
+  el.innerHTML = "";
+  el.appendChild(img);
 }
 
 /* ===================== SKELETONS / ERROR / EMPTY ===================== */
@@ -388,6 +418,126 @@ function renderCategoriesGrid(){
     switchView("home");
     renderChips();
     renderAll();
+  }));
+}
+
+/* ===================== HOST (resource/link cards from admin) ===================== */
+async function loadHostLinks(){
+  const wrap = $("#host-grid");
+  wrap.innerHTML = `<div class="skel-card" style="min-height:150px;"></div>`.repeat(3);
+  try{
+    const snap = await get(ref(db, "hostLinks"));
+    const val = snap.exists() ? snap.val() : {};
+    state.hostLinks = Object.entries(val).map(([id,v])=>({id,...v})).filter(l=>l.enabled!==false);
+    state.hostLoaded = true;
+    renderHostGrid();
+  }catch(err){
+    wrap.innerHTML = emptyState("Unable to load", "Please check your internet connection and try again.");
+  }
+}
+// splits on a literal "/n" marker the admin types manually (not a real
+// newline) into bulleted lines; text without the marker renders exactly
+// as before, unchanged
+function formatMarkerText(text){
+  const escaped = escapeHtml(text);
+  // supports both the manual "/n" marker AND real line breaks — e.g. text
+  // pasted in from somewhere else that already has actual Enter/newlines
+  if(!escaped.includes("/n") && !/\r\n|\r|\n/.test(escaped)) return escaped;
+  return escaped.split(/\/n|\r\n|\r|\n/).map(l=>l.trim()).filter(Boolean).map(l=>`<div>• ${l}</div>`).join("");
+}
+function hostCardHtml(link){
+  const logo = link.logoUrl
+    ? `<img class="host-card-logo" src="${escapeHtml(link.logoUrl)}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'host-card-logo-fallback',textContent:'${escapeHtml((link.name||'?').charAt(0).toUpperCase())}'}))">`
+    : `<div class="host-card-logo-fallback">${escapeHtml((link.name||"?").charAt(0).toUpperCase())}</div>`;
+  return `<div class="host-card">
+    <div class="host-card-head">
+      ${logo}
+      <div class="host-card-name">${escapeHtml(link.name||"Untitled")}</div>
+    </div>
+    ${link.description ? `<div class="host-card-desc">${formatMarkerText(link.description)}</div>` : ""}
+    <div class="host-card-actions">
+      <button class="btn btn-ghost" data-host-view="${escapeHtml(link.id)}">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+        View
+      </button>
+      <button class="btn btn-primary" data-host-chrome="${escapeHtml(link.id)}">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>
+        Continue with Chrome
+      </button>
+    </div>
+  </div>`;
+}
+function renderHostGrid(){
+  const wrap = $("#host-grid");
+  if(!state.hostLinks.length){
+    wrap.innerHTML = emptyState("No resources yet", "Hosting and Firebase links added by the team will show up here.");
+    return;
+  }
+  wrap.innerHTML = state.hostLinks.map(hostCardHtml).join("");
+  $$("#host-grid [data-host-view]").forEach(btn=> btn.addEventListener("click", ()=>{
+    const link = state.hostLinks.find(l=>l.id===btn.dataset.hostView);
+    if(link && link.url) window.open(link.url, "_blank", "noopener");
+    else toast("Link is not available.", "error");
+  }));
+  $$("#host-grid [data-host-chrome]").forEach(btn=> btn.addEventListener("click", ()=>{
+    const link = state.hostLinks.find(l=>l.id===btn.dataset.hostChrome);
+    if(link && link.url) openInChrome(link.url);
+    else toast("Link is not available.", "error");
+  }));
+}
+// forces the link open in the system Chrome browser (via an Android intent),
+// instead of any in-app/WebView tab — needed because Google Sign-In and
+// similar flows are blocked inside embedded WebViews (e.g. an Appilix APK)
+function openInChrome(url){
+  const isAndroid = /Android/i.test(navigator.userAgent);
+  if(isAndroid){
+    try{
+      const scheme = url.startsWith("http://") ? "http" : "https";
+      const stripped = url.replace(/^https?:\/\//, "");
+      window.location.href = `intent://${stripped}#Intent;scheme=${scheme};package=com.android.chrome;end`;
+      return;
+    }catch(e){ /* fall through to a normal new tab */ }
+  }
+  window.open(url, "_blank", "noopener");
+}
+
+/* ===================== PROMPTS (title + copy-able text, from admin) ===================== */
+async function loadPrompts(){
+  const wrap = $("#prompt-grid");
+  wrap.innerHTML = `<div class="skel-card" style="min-height:120px;"></div>`.repeat(3);
+  try{
+    const snap = await get(ref(db, "prompts"));
+    const val = snap.exists() ? snap.val() : {};
+    state.prompts = Object.entries(val).map(([id,v])=>({id,...v})).filter(p=>p.enabled!==false);
+    state.promptsLoaded = true;
+    renderPromptGrid();
+  }catch(err){
+    wrap.innerHTML = emptyState("Unable to load", "Please check your internet connection and try again.");
+  }
+}
+function promptCardHtml(p){
+  return `<div class="host-card">
+    <div class="host-card-name">${escapeHtml(p.title||"Untitled")}</div>
+    <div class="host-card-actions">
+      <button class="btn btn-primary btn-block" data-copy-prompt="${escapeHtml(p.id)}">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+        Copy
+      </button>
+    </div>
+  </div>`;
+}
+function renderPromptGrid(){
+  const wrap = $("#prompt-grid");
+  if(!state.prompts.length){
+    wrap.innerHTML = emptyState("No prompts yet", "Prompts added by the team will show up here.");
+    return;
+  }
+  wrap.innerHTML = state.prompts.map(promptCardHtml).join("");
+  $$("#prompt-grid [data-copy-prompt]").forEach(btn=> btn.addEventListener("click", ()=>{
+    const p = state.prompts.find(x=>x.id===btn.dataset.copyPrompt);
+    if(!p || !p.promptText){ toast("Nothing to copy.", "error"); return; }
+    copyToClipboard(p.promptText);
+    maybeOpenSmartlink(); // same ad trigger pattern as the download flow
   }));
 }
 
@@ -500,6 +650,7 @@ function openDetail(id){
   $("#detail-dl-btn").innerHTML = `${dlIconSvg(meta.type)} ${escapeHtml(meta.label)}`;
   $("#detail-overlay").classList.add("show");
   $("#detail-sheet").classList.add("show");
+  document.body.classList.add("sheet-open"); // locks background scroll while the sheet is open
   history.pushState({type:"overlay", overlay:"detail"}, "", location.href);
 }
 $("#detail-dl-btn").addEventListener("click", ()=>{ if(state.detailApp) requestDownload(state.detailApp); });
@@ -761,6 +912,7 @@ function renderProfileView(){
     });
     menu.innerHTML = `
       <button class="menu-item" data-view="downloads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>My Downloads</button>
+      <button class="menu-item" data-view="prompts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>Prompts</button>
       <button class="menu-item" data-page="privacy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg>Privacy Policy</button>
       <button class="menu-item" data-page="terms"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l5 5v13H6z"/><path d="M14 3v5h5"/></svg>Terms of Service</button>
       <button class="menu-item" data-page="about"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>About</button>
@@ -775,6 +927,7 @@ function renderProfileView(){
       </div>`;
     menu.innerHTML = `
       <button class="menu-item" id="btn-profile-signin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg>Sign In</button>
+      <button class="menu-item" data-view="prompts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>Prompts</button>
       <button class="menu-item" data-page="privacy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg>Privacy Policy</button>
       <button class="menu-item" data-page="terms"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l5 5v13H6z"/><path d="M14 3v5h5"/></svg>Terms of Service</button>
       <button class="menu-item" data-page="about"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>About</button>
@@ -785,7 +938,7 @@ function renderProfileView(){
 }
 
 /* ===================== VIEW ROUTING (+ browser/hardware back button support) ===================== */
-const views = ["home","categories","downloads","profile","privacy","terms","about","contact"];
+const views = ["home","host","prompts","categories","downloads","profile","privacy","terms","about","contact"];
 function applyView(name){
   state.currentView = name;
   views.forEach(v=> $("#view-"+v).classList.toggle("show", v===name));
@@ -795,6 +948,8 @@ function applyView(name){
   if(name==="downloads") renderDownloadsView();
   if(name==="profile") renderProfileView();
   if(name==="categories") renderCategoriesGrid();
+  if(name==="host"){ if(state.hostLoaded) renderHostGrid(); else loadHostLinks(); }
+  if(name==="prompts"){ if(state.promptsLoaded) renderPromptGrid(); else loadPrompts(); }
 }
 function switchView(name){
   const changed = state.currentView !== name;
@@ -806,6 +961,7 @@ function switchView(name){
 function closeDetailUI(){
   $("#detail-overlay").classList.remove("show");
   $("#detail-sheet").classList.remove("show");
+  document.body.classList.remove("sheet-open");
 }
 function closeGateUI(){
   $("#gate-overlay").classList.remove("show");
@@ -854,7 +1010,21 @@ history.replaceState({type:"view", view:"home"}, "", location.href);
 
 getRedirectResult(auth).catch(()=>{});
 
-setTimeout(()=>{
+// keeps the loading splash up until Firebase has actually determined
+// whether a session is already signed in, then goes straight into the app
+// (no welcome-screen flash) or shows the welcome/login screen — whichever
+// is correct — instead of always revealing welcome after a fixed delay
+let bootResolved = false;
+function resolveBoot(user){
+  if(bootResolved) return;
+  bootResolved = true;
   $("#boot").style.display = "none";
-  $("#welcome").style.display = "flex";
-}, 250);
+  if(!user){
+    $("#welcome").style.display = "flex";
+  }
+  // if a user is already signed in, onAuthStateChanged's own "if(user)"
+  // branch calls showApp() and hides #welcome — nothing more to do here
+}
+// safety net: don't leave the splash up forever if the auth check is
+// ever unexpectedly slow or stuck
+setTimeout(()=> resolveBoot(state.user), 4000);
