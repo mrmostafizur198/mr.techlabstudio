@@ -306,21 +306,21 @@ function applySettingsToUI(){
   }
 }
 
-const DEFAULT_MARK_SVG = '<svg viewBox="0 0 100 100" fill="none"><path d="M30 68 L50 26 L70 68 M38 54 H62" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-// swaps the built-in mountain-icon mark for the logo set on the admin
-// Settings page (falls back to the default icon if empty or broken)
+const DEFAULT_MARK_HTML = '<img src="logo.png" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">';
+// swaps the built-in logo.png mark for the logo set on the admin
+// Settings page (falls back to logo.png if empty or broken)
 function setBrandMark(selector, logoUrl){
   const el = $(selector);
   if(!el) return;
   if(!logoUrl){
-    if(!el.querySelector("svg")) el.innerHTML = DEFAULT_MARK_SVG;
+    if(!el.querySelector("img")) el.innerHTML = DEFAULT_MARK_HTML;
     return;
   }
   const img = document.createElement("img");
   img.src = logoUrl;
   img.alt = "";
   img.style.cssText = "width:100%;height:100%;object-fit:cover;border-radius:inherit;";
-  img.onerror = ()=>{ el.innerHTML = DEFAULT_MARK_SVG; };
+  img.onerror = ()=>{ el.innerHTML = DEFAULT_MARK_HTML; };
   el.innerHTML = "";
   el.appendChild(img);
 }
