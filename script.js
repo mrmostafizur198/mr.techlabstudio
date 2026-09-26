@@ -457,8 +457,8 @@ function hostCardHtml(link){
     ${link.description ? `<div class="host-card-desc">${formatMarkerText(link.description)}</div>` : ""}
     <div class="host-card-actions">
       <button class="btn btn-ghost" data-host-view="${escapeHtml(link.id)}">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-        View
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2.5"/><path d="m10 9 5 3-5 3V9Z" fill="currentColor" stroke="none"/></svg>
+        সেট-আপ ভিডিও
       </button>
       <button class="btn btn-primary" data-host-chrome="${escapeHtml(link.id)}">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>
@@ -476,8 +476,8 @@ function renderHostGrid(){
   wrap.innerHTML = state.hostLinks.map(hostCardHtml).join("");
   $$("#host-grid [data-host-view]").forEach(btn=> btn.addEventListener("click", ()=>{
     const link = state.hostLinks.find(l=>l.id===btn.dataset.hostView);
-    if(link && link.url) window.open(link.url, "_blank", "noopener");
-    else toast("Link is not available.", "error");
+    if(link && link.videoUrl) window.open(link.videoUrl, "_blank", "noopener");
+    else toast("Setup video is not available yet.", "error");
   }));
   $$("#host-grid [data-host-chrome]").forEach(btn=> btn.addEventListener("click", ()=>{
     const link = state.hostLinks.find(l=>l.id===btn.dataset.hostChrome);
@@ -597,7 +597,6 @@ $("#search-clear").addEventListener("click", ()=>{
   $("#search-clear").classList.remove("show");
   runSearch("");
 });
-$("#nav-search").addEventListener("click", ()=>{ switchView("home"); $("#search-input").focus(); });
 
 function runSearch(q){
   if(!q){
