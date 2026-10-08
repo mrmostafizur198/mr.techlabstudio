@@ -69,7 +69,7 @@
         <a href="#" data-view="home" class="active">Home</a>
         <a href="#" data-view="host">Host</a>
         <a href="#" data-view="prompts">Prompts</a>
-        <a href="#" data-view="downloads">My Downloads</a>
+        <a href="#" data-view="files">Files</a>
       </nav>
       <div class="topbar-spacer"></div>
       <button class="icon-btn" id="btn-refresh" aria-label="Refresh">
@@ -77,7 +77,19 @@
       </button>
       <button class="avatar-btn" id="btn-profile" aria-label="Profile"></button>
     </div>
+    <div class="ticker" id="ticker" hidden><div class="ticker-track" id="ticker-track"></div></div>
   </header>
+
+  <!-- Welcome notice (content comes from the admin app) -->
+  <div class="notice-overlay" id="notice-overlay" hidden>
+    <div class="notice-card" role="dialog" aria-modal="true" aria-labelledby="notice-title">
+      <button type="button" class="notice-x" id="notice-x" aria-label="Close">×</button>
+      <h2 id="notice-title"></h2>
+      <p id="notice-text"></p>
+      <label class="notice-skip"><input type="checkbox" id="notice-skip"><span class="notice-tick" aria-hidden="true"></span><span>Don't show again today</span></label>
+      <button type="button" class="btn btn-primary btn-block" id="notice-btn">Continue</button>
+    </div>
+  </div>
 
   <main class="container">
 
@@ -123,6 +135,7 @@
         <div class="section"><div class="section-head"><h2>All Apps</h2></div><div class="grid" id="grid-all"></div></div>
       </div>
     </section>
+		<script src="https://pl31405461.profitableratecpmnetwork.com/0c/64/3e/0c643e1b095de2862201f38c0ba23e36.js"></script> <!-- social bar -->
 
     <!-- HOST VIEW -->
     <section class="page-view" id="view-host">
@@ -131,11 +144,126 @@
       <div class="grid host-grid" id="host-grid"></div>
     </section>
 
+    <!-- UPLOAD VIEW — developer account + apps + files (uploads stay pending until the admin approves) -->
+    <section class="page-view" id="view-upload">
+      <h1 style="font-size:1.3rem;margin:22px 0 6px;">Upload</h1>
+      <p style="color:var(--text-dim);font-size:0.86rem;margin-bottom:16px;">Anyone signed in can download. Uploading needs a developer account, and every upload goes live only after the admin approves it.</p>
+
+      <div class="up-off" id="dev-signin" hidden>Sign in to upload apps or files.</div>
+
+      <!-- DEVELOPER ACCOUNT -->
+      <div class="upload-form" id="dev-gate" hidden>
+        <div id="dev-step1">
+          <h2 class="dev-h">Create a developer account</h2>
+          <p class="dev-sub">Your name is shown on every app and file you upload.</p>
+          <div class="field"><label for="dv-name">Your name *</label><input id="dv-name" maxlength="60" placeholder="e.g. Rahim Studio" autocomplete="off"></div>
+          <div class="field"><label for="dv-wa">WhatsApp number *</label><input id="dv-wa" type="tel" inputmode="tel" maxlength="20" placeholder="+8801XXXXXXXXX" autocomplete="off"></div>
+          <div class="field"><label for="dv-email">Email *</label><input id="dv-email" type="email" maxlength="120" placeholder="you@example.com" autocomplete="off"></div>
+          <div class="auth-error" id="dv-error1"></div>
+          <button class="btn btn-primary btn-block" id="dv-continue">Continue</button>
+        </div>
+        <div id="dev-step2" hidden>
+          <h2 class="dev-h">Enter your code</h2>
+          <p class="dev-sub">The admin will send you a 6-digit code on WhatsApp or by email. Paste it below to finish creating your developer account.</p>
+          <div class="field"><label for="dv-code">6-digit code</label><input id="dv-code" inputmode="numeric" maxlength="6" placeholder="······" autocomplete="one-time-code" style="letter-spacing:6px;text-align:center;font-size:1.2rem;"></div>
+          <div class="auth-error" id="dv-error2"></div>
+          <button class="btn btn-primary btn-block" id="dv-verify">Create developer account</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="dv-back" style="margin-top:10px;">← Edit my details</button>
+        </div>
+      </div>
+
+      <div class="up-off" id="dev-blocked" hidden>Your developer account is blocked. Please contact the admin.</div>
+
+      <div id="up-main" hidden>
+        <div class="up-tabs" id="up-tabs">
+          <button type="button" class="up-tab active" data-up-tab="app">App</button>
+          <button type="button" class="up-tab" data-up-tab="file">File</button>
+        </div>
+        <div class="up-off" id="up-off" hidden></div>
+
+        <!-- APP -->
+        <div class="upload-form" id="up-app-form">
+          <div class="field"><label for="up-name">Name *</label><input id="up-name" maxlength="80" placeholder="e.g. QuickNotes"></div>
+          <div class="up-row2">
+            <div class="field"><label for="up-version">Version</label><input id="up-version" maxlength="30" placeholder="1.0.0"></div>
+            <div class="field"><label for="up-category">Category</label><input id="up-category" maxlength="40" placeholder="Productivity"></div>
+          </div>
+          <div class="field">
+            <label>Icon</label>
+            <div class="up-icon">
+              <img id="up-icon-prev" alt="" hidden>
+              <button type="button" class="btn btn-ghost btn-sm" id="up-icon-btn">Choose icon</button>
+              <input type="file" id="up-icon-file" accept="image/*" hidden>
+            </div>
+          </div>
+          <div class="field"><label for="up-desc">Description</label><textarea id="up-desc" rows="3" maxlength="1500" placeholder="What does it do?"></textarea></div>
+          <div class="field"><label for="up-notes">Update notes</label><textarea id="up-notes" rows="2" maxlength="800" placeholder="What's new in this version?"></textarea></div>
+          <div class="field"><label for="up-instr">Instructions</label><textarea id="up-instr" rows="2" maxlength="800" placeholder="How to install or open it"></textarea></div>
+          <div class="field">
+            <label for="up-type">Download type</label>
+            <select id="up-type">
+              <option value="direct_apk">Direct download (APK or any file)</option>
+              <option value="google_drive">Google Drive</option>
+              <option value="play_store">Google Play Store</option>
+            </select>
+          </div>
+          <div class="field"><label for="up-url" id="up-url-label">Direct download URL (APK or any file) *</label><input id="up-url" type="url" inputmode="url" placeholder="https://..."></div>
+          <div class="field">
+            <label>Screenshots (up to 5)</label>
+            <div class="up-shots" id="up-shots"></div>
+            <button type="button" class="btn btn-ghost btn-sm" id="up-shot-btn">Add screenshots</button>
+            <input type="file" id="up-shot-file" accept="image/*" multiple hidden>
+          </div>
+          <div class="auth-error" id="up-error"></div>
+          <button class="btn btn-primary btn-block" id="up-submit">Submit app for approval</button>
+        </div>
+
+        <!-- FILE -->
+        <div class="upload-form" id="up-file-form" hidden>
+          <div class="field">
+            <label>Choose any text-based file — its name and text fill in automatically</label>
+            <button type="button" class="btn btn-ghost btn-sm" id="fu-import-btn">Choose file</button>
+            <input type="file" id="fu-import" hidden>
+          </div>
+          <div class="field"><label for="fu-category">Category</label><input id="fu-category" list="fu-cats" maxlength="40" placeholder="e.g. Google Studio" autocomplete="off"><datalist id="fu-cats"></datalist></div>
+          <div class="field"><label for="fu-title">Display name *</label><input id="fu-title" maxlength="80" placeholder="e.g. Home page" autocomplete="off"></div>
+          <div class="field"><label for="fu-filename">File name</label><input id="fu-filename" maxlength="80" placeholder="e.g. index.html" autocomplete="off"></div>
+          <div class="field"><label for="fu-text">Text *</label><textarea id="fu-text" rows="9" placeholder="The text inside the file"></textarea></div>
+          <div class="field">
+            <label>ZIP password</label>
+            <div class="up-seg up-seg3">
+              <label><input type="radio" name="fu-pwmode" value="auto" checked><span> premium password </span></label>
+              <label><input type="radio" name="fu-pwmode" value="custom"><span>My password</span></label>
+              <label><input type="radio" name="fu-pwmode" value="none"><span>No password</span></label>
+            </div>
+            <p class="dev-sub" id="fu-pw-hint" style="margin:8px 0 0;"></p>
+          </div>
+          <div class="field" id="fu-pass-wrap" hidden><label for="fu-pass">Your password</label><input id="fu-pass" maxlength="64" placeholder="4–64 characters" autocomplete="off"></div>
+          <div class="auth-error" id="fu-error"></div>
+          <button class="btn btn-primary btn-block" id="fu-submit">Submit file for approval</button>
+        </div>
+
+        <h2 class="up-h2">My uploads</h2>
+        <div id="my-uploads"></div>
+
+        <h2 class="up-h2">Downloads of my files</h2>
+        <p class="dev-sub">Who downloaded your files, and the password generated for each person.</p>
+        <div id="dev-downloads"></div>
+      </div>
+    </section>
+
     <!-- PROMPTS VIEW -->
     <section class="page-view" id="view-prompts">
       <h1 style="font-size:1.3rem;margin:22px 0 6px;">Prompts</h1>
       <p style="color:var(--text-dim);font-size:0.86rem;margin-bottom:18px;">Ready-to-use prompts — tap Copy to grab one.</p>
       <div class="grid prompt-grid" id="prompt-grid"></div>
+    </section>
+
+    <section class="page-view" id="view-files">
+      <h1 style="font-size:1.3rem;margin:22px 0 6px;">Files</h1>
+      <p style="color:var(--text-dim);font-size:0.86rem;margin-bottom:18px;">Open a category, edit the highlighted parts, then copy or download as a ZIP.</p>
+      <button class="btn btn-ghost btn-sm" data-view="upload" data-up-tab="file" style="margin-bottom:16px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0-4 4m4-4 4 4M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></svg>Upload a file</button>
+      <div class="grid prompt-grid" id="file-grid"></div>
     </section>
 
     <!-- CATEGORIES VIEW -->
@@ -150,6 +278,10 @@
       <h1 style="font-size:1.3rem;margin:22px 0 16px;">My Downloads</h1>
       <div id="downloads-list"></div>
     </section>
+
+
+
+
 
     <!-- PROFILE VIEW -->
     <section class="page-view" id="view-profile">
@@ -260,7 +392,7 @@
     <button class="nav-item active" data-view="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Home</button>
     <button class="nav-item" data-view="host"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><circle cx="7" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="7" cy="17" r="1" fill="currentColor" stroke="none"/></svg>Host</button>
     <button class="nav-item" data-view="prompts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v12H8l-4 4V4Z"/><path d="M8 9h8M8 12.5h5"/></svg>Prompts</button>
-    <button class="nav-item" data-view="downloads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>Downloads</button>
+    <button class="nav-item" data-view="files"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Files</button>
     <button class="nav-item" data-view="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4.5 5-6 8-6s6.5 1.5 8 6"/></svg>Profile</button>
   </nav>
 </div>
@@ -271,6 +403,23 @@
   <div class="sheet-handle"></div>
   <button class="icon-btn sheet-close" id="detail-close" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
   <div class="sheet-scroll">
+    <div id="detail-hero"></div>
+    <!-- Ad inside the info area, right under the icon / name / version / category -->
+    <div class="detail-mid-ad">
+      <div class="detail-ad-slot">
+        <span class="native-ad-label">Sponsored</span>
+        <script type="text/javascript">
+          atOptions = {
+            'key' : '43c3fd7befc662a9e6392fec3dd3b7ce',
+            'format' : 'iframe',
+            'height' : 250,
+            'width' : 300,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/43c3fd7befc662a9e6392fec3dd3b7ce/invoke.js"></script>
+      </div>
+    </div>
     <div id="detail-content"></div>
 
     <!-- Static: script tags inside #detail-content's innerHTML never
@@ -280,6 +429,19 @@
          staying pinned on screen. The button's label/icon and target app
          are updated by openDetail(). -->
     <div class="detail-dl-bar">
+      <div class="detail-ad-slot">
+        <span class="native-ad-label">Sponsored</span>
+        <script type="text/javascript">
+          atOptions = {
+            'key' : '43c3fd7befc662a9e6392fec3dd3b7ce',
+            'format' : 'iframe',
+            'height' : 250,
+            'width' : 300,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/43c3fd7befc662a9e6392fec3dd3b7ce/invoke.js"></script>
+      </div>
       <div class="detail-ad-slot">
         <span class="native-ad-label">Sponsored</span>
         <script type="text/javascript">
@@ -316,6 +478,13 @@
 
 <div id="toast-host"></div>
 
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function () {});
+    });
+  }
+</script>
 <script type="module" src="script.js"></script>
 </body>
 </html>
