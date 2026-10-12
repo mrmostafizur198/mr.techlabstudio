@@ -736,7 +736,24 @@ async function loadZipPrompts(){
   }
 }
 
+function zpInjectShareCss(){
+  if(document.getElementById("zp-share-css")) return;
+  const st = document.createElement("style"); st.id = "zp-share-css";
+  st.textContent = ".pc-cat{scroll-margin-top:84px}.pc-head .pc-tail{display:inline-flex;align-items:center;gap:10px;flex-shrink:0}.pc-share{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;cursor:pointer;color:inherit;background:rgba(245,180,0,.14);border:1px solid rgba(245,180,0,.35);transition:transform .15s,background .15s}.pc-share svg{width:16px;height:16px}.pc-share:hover,.pc-share:focus-visible{background:rgba(245,180,0,.28);outline:none}.pc-share:active{transform:scale(.88)}";
+  document.head.appendChild(st);
+}
+
+async function shareCategory(cat){
+  const url = location.origin + location.pathname + "?cat=" + encodeURIComponent(cat);
+  if(navigator.share){
+    try{ await navigator.share({ title: cat, text: cat + " — files", url }); return; }
+    catch(e){ if(e && e.name === "AbortError") return; }
+  }
+  copyToClipboard(url);
+}
+
 function renderZipGrid(){
+  zpInjectShareCss();
   const wrap = $("#file-grid");
   if(!wrap) return;
   if(!state.zipPrompts.length){
@@ -747,7 +764,7 @@ function renderZipGrid(){
   state.zipPrompts.forEach(p=>{ const c = (p.category||"").trim() || "General"; if(!map.has(c)) map.set(c, []); map.get(c).push(p); });
   const groups = [...map.entries()];
   wrap.innerHTML = groups.map(([cat, items], gi)=>`<div class="host-card pc-cat" data-gi="${gi}">
-    <button class="pc-head" data-pcat><span>${escapeHtml(cat)}</span><span class="pc-count">${items.length}</span></button>
+    <button class="pc-head" data-pcat><span>${escapeHtml(cat)}</span><span class="pc-tail"><span class="pc-count">${items.length}</span><span class="pc-share" role="button" tabindex="0" data-pshare aria-label="Share ${escapeHtml(cat)}" title="Share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg></span></span></button>
     <div class="pc-body" hidden>
       ${items.map(zpItemHtml).join("")}
       <button class="btn btn-primary btn-block" data-pzip>Download ZIP</button>
@@ -755,6 +772,13 @@ function renderZipGrid(){
   </div>`).join("");
   const byId = id => state.zipPrompts.find(x=>x.id===id);
   wrap.onclick = (e)=>{
+    const sbtn = e.target.closest("[data-pshare]");
+    if(sbtn){
+      e.preventDefault(); e.stopPropagation();
+      const gi = +sbtn.closest(".pc-cat").dataset.gi;
+      shareCategory(groups[gi][0]);
+      return;
+    }
     const head = e.target.closest("[data-pcat]");
     if(head){ const b = head.nextElementSibling; b.hidden = !b.hidden; head.classList.toggle("open", !b.hidden); return; }
     const item = e.target.closest(".pc-item");
@@ -777,6 +801,12 @@ function renderZipGrid(){
     const i = e.target.closest("[data-pe]"); if(!i) return;
     (state.zipEdits[i.dataset.pe] = state.zipEdits[i.dataset.pe] || {})[i.dataset.k] = i.value;
     zpRefresh(wrap);
+  };
+  wrap.onkeydown = (e)=>{
+    if(e.key !== "Enter" && e.key !== " ") return;
+    const sbtn = e.target.closest && e.target.closest("[data-pshare]"); if(!sbtn) return;
+    e.preventDefault(); e.stopPropagation();
+    shareCategory(groups[+sbtn.closest(".pc-cat").dataset.gi][0]);
   };
   zpRefresh(wrap);
 }
@@ -1406,14 +1436,15 @@ function zpDeepHighlight(){
   if(body){ body.hidden = false; const h = body.previousElementSibling; if(h) h.classList.add("open"); }
   if(!document.getElementById("deep-flash-css")){
     const st = document.createElement("style"); st.id = "deep-flash-css";
-    st.textContent = "@keyframes deepFlash{0%,100%{box-shadow:0 0 0 0 rgba(245,180,0,0)}30%,70%{box-shadow:0 0 0 3px #f5b400,0 0 22px rgba(245,180,0,.6)}}.deep-flash{animation:deepFlash 3.2s ease;border-radius:12px}";
+    st.textContent = "@keyframes deepFlash{0%,100%{box-shadow:0 0 0 0 rgba(245,180,0,0);transform:scale(1)}20%,75%{box-shadow:0 0 0 3px #f5b400,0 0 26px rgba(245,180,0,.65);transform:scale(1.015)}}.deep-flash{animation:deepFlash 3.2s ease;border-radius:12px;position:relative;z-index:1}";
     document.head.appendChild(st);
   }
   setTimeout(()=>{
     target.scrollIntoView({ behavior:"smooth", block: isFile ? "center" : "start" });
+    target.classList.remove("deep-flash"); void target.offsetWidth;
     target.classList.add("deep-flash");
     setTimeout(()=> target.classList.remove("deep-flash"), 3400);
-  }, 200);
+  }, 350);
 }
 function restoreSession(sn){
   if(!sn) return;
