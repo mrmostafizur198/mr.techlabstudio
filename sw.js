@@ -1,13 +1,13 @@
 /*
-  Mr Techlab Studio — service worker (structure only, not yet registered from index.html).
+  Mr Techlab Studio — service worker (registered from index.html).
   Kept intentionally minimal: caches only the static app shell, never app/catalog data
-  (which must always come fresh from Firebase). To activate, register it from index.html:
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-*/
-const CACHE_NAME = "mr-apk-bazar-shell-v1";
+  (which must always come fresh from Firebase). */
+const CACHE_NAME = "mr-apk-bazar-shell-v2";
 const SHELL_ASSETS = [
   "./index.html",
-  "./manifest.json"
+  "./manifest.json",
+  "./styles.css",
+  "./script.js"
 ];
 
 self.addEventListener("install", (event) => {
