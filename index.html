@@ -1,300 +1,490 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0b0817">
-<meta name="color-scheme" content="dark">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mr Techlab Studio — Premium Android App Marketplace</title>
+<meta name="description" content="Mr Techlab Studio — a premium marketplace for discovering and downloading Android apps.">
+<meta name="theme-color" content="#0A0A10">
 <link rel="manifest" href="manifest.json">
-<!-- ডিফল্ট লোগো: logo.png ফাইলটা অ্যাপের রুট ফোল্ডারে (index.html এর পাশে) রাখবে -->
-<link rel="icon" type="image/png" href="logo.png">
-<link rel="apple-touch-icon" href="logo.png">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<title>MR TECHLABE STUDIO</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" id="favicon-link" href="logo.png">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div id="app">
 
+<!-- =========================================================
+     ADS (Adsterra) — self-rendering, site-wide, loaded once.
+     ========================================================= -->
+<script src="https://pl31405166.profitableratecpmnetwork.com/f6/57/db/f657db1113a6bcf4fab49d073628017e.js"></script> <!-- popunder -->
+<script src="https://pl31405461.profitableratecpmnetwork.com/0c/64/3e/0c643e1b095de2862201f38c0ba23e36.js"></script> <!-- social bar -->
+
+<div id="boot"><div class="boot-mark"><img src="logo.png" alt=""></div></div>
+
+<!-- ============ WELCOME / AUTH ============ -->
+<div id="welcome" style="display:none;">
+  <div class="welcome-content">
+    <div class="welcome-mark" id="welcome-mark">
+      <img src="logo.png" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">
+    </div>
+    <h1 class="welcome-title">Mr Techlab Studio</h1>
+    <p class="welcome-tagline">Discover and download Android apps, curated in one premium marketplace.</p>
+
+    <div class="auth-stack" id="auth-buttons">
+      <button class="btn btn-primary btn-block" id="btn-google">
+        <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.5 6 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.7 18.9 13 24 13c3.1 0 5.8 1.1 8 3l5.7-5.7C34.5 6.7 29.5 4.5 24 4.5c-7.4 0-13.8 4.2-17.7 10.2z"/><path fill="#4CAF50" d="M24 44c5.4 0 10.3-2.1 14-5.4l-6.5-5.5c-2 1.5-4.6 2.4-7.5 2.4-5.3 0-9.7-3.4-11.3-8.1l-6.6 5.1C9.9 39.6 16.4 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.5l6.5 5.5C40.9 36.4 44 30.7 44 24c0-1.2-.1-2.3-.4-3.5z"/></svg>
+        Continue with Google
+      </button>
+      <button class="btn btn-ghost btn-block" id="btn-email">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+        Sign in with Email
+      </button>
+    </div>
+
+    <div id="email-panel">
+      <div class="field"><label for="email-input">Email</label><input id="email-input" type="email" autocomplete="email" placeholder="you@example.com"></div>
+      <div class="field"><label for="pass-input">Password</label><input id="pass-input" type="password" autocomplete="current-password" placeholder="••••••••"></div>
+      <div class="auth-error" id="email-error"></div>
+      <button class="btn btn-primary btn-block" id="btn-email-submit">Sign In</button>
+      <div class="mode-toggle" id="email-mode-toggle">Don't have an account? <button id="btn-toggle-signup">Create one</button></div>
+      <button class="btn btn-ghost btn-block btn-sm" id="btn-email-back" style="margin-top:6px;">Back</button>
+    </div>
+
+    <a class="guest-link" href="#" id="btn-guest">Continue as Guest →</a>
+    <p class="welcome-legal">By continuing you agree to our <a href="#" data-page="terms">Terms</a> and <a href="#" data-page="privacy">Privacy Policy</a>.</p>
+  </div>
+</div>
+
+<!-- ============ APP SHELL ============ -->
+<div id="app">
   <header class="topbar">
-    <a class="brand" href="#" onclick="showSec('home');return false">
-      <img id="logo-top" src="logo.png" alt="">
-      <span class="brand-name" id="name-top">MR TECHLABE STUDIO</span>
-    </a>
-    <button id="bell-btn" class="bell hidden" onclick="openNotifs()" aria-label="Notifications"><i class="fas fa-bell"></i><em id="bell-n" class="hidden">0</em></button>
-    <button id="wallet-chip" class="chip-wallet hidden" onclick="showSec('addmoney')"><i class="fas fa-wallet"></i> ৳ <span id="bal-top">0</span></button>
-    <button id="login-btn" class="btn btn-pri btn-sm" onclick="showSec('auth')"><i class="fas fa-right-to-bracket"></i> Login</button>
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark" id="topbar-mark"><img src="logo.png" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div>
+        Mr Techlab Studio
+      </div>
+      <nav class="desktop-nav" id="desktop-nav">
+        <a href="#" data-view="home" class="active">Home</a>
+        <a href="#" data-view="host">Host</a>
+        <a href="#" data-view="prompts">Prompts</a>
+        <a href="#" data-view="files">Files</a>
+      </nav>
+      <div class="topbar-spacer"></div>
+      <button class="icon-btn" id="btn-refresh" aria-label="Refresh">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v6h-6"/></svg>
+      </button>
+      <button class="avatar-btn" id="btn-profile" aria-label="Profile"></button>
+    </div>
+    <div class="ticker" id="ticker" hidden><div class="ticker-track" id="ticker-track"></div></div>
   </header>
 
-  <!-- ================= AUTH ================= -->
-  <section id="auth-sec" class="page hidden">
-    <div class="auth-logo"><img id="logo-auth" src="logo.png" alt=""><h2 id="name-auth">MR TECHLABE STUDIO</h2><p class="muted" style="font-size:12px;margin-top:2px">Login to buy, top-up and manage your wallet</p></div>
-    <div class="card">
-      <div class="seg"><button id="seg-login" class="on" onclick="authTab('login')">Login</button><button id="seg-reg" onclick="authTab('reg')">Register</button></div>
-      <div id="login-view" class="stack">
-        <div><label class="l">Email</label><input class="f" id="login-email" type="email" autocomplete="email" placeholder="you@email.com"></div>
-        <div><label class="l">Password</label><input class="f" id="login-pass" type="password" autocomplete="current-password" placeholder="••••••••"></div>
-        <button class="btn btn-pri btn-block" onclick="handleLogin()">Login</button>
-      </div>
-      <div id="reg-view" class="stack hidden">
-        <div><label class="l">Full name</label><input class="f" id="reg-name" type="text" autocomplete="name" placeholder="Your name"></div>
-        <div><label class="l">Phone</label><input class="f" id="reg-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="01XXXXXXXXX"></div>
-        <div><label class="l">Email</label><input class="f" id="reg-email" type="email" autocomplete="email" placeholder="you@email.com"></div>
-        <div><label class="l">Password (min 6)</label><input class="f" id="reg-pass" type="password" autocomplete="new-password" placeholder="••••••••"></div>
-        <button class="btn btn-pri btn-block" onclick="handleRegister()">Create account</button>
-      </div>
-      <div class="or">or</div>
-      <button class="btn btn-ghost btn-block" onclick="handleGoogleLogin()"><i class="fab fa-google" style="color:#ea4335"></i> Continue with Google</button>
+  <!-- Welcome notice (content comes from the admin app) -->
+  <div class="notice-overlay" id="notice-overlay" hidden>
+    <div class="notice-card" role="dialog" aria-modal="true" aria-labelledby="notice-title">
+      <button type="button" class="notice-x" id="notice-x" aria-label="Close">×</button>
+      <h2 id="notice-title"></h2>
+      <p id="notice-text"></p>
+      <label class="notice-skip"><input type="checkbox" id="notice-skip"><span class="notice-tick" aria-hidden="true"></span><span>Don't show again today</span></label>
+      <button type="button" class="btn btn-primary btn-block" id="notice-btn">Continue</button>
     </div>
-  </section>
-
-  <!-- ================= HOME ================= -->
-  <section id="home-sec" class="page">
-    <div class="slider"><div class="slider-track" id="slider-track"><div class="hero-fallback"><i class="fas fa-spinner fa-spin"></i></div></div><div class="slider-dots" id="slider-dots"></div></div>
-
-    <div id="notice-bar" class="notice hidden"><i class="fas fa-bullhorn"></i><span id="notice-text"></span></div>
-
-    <div class="search"><i class="fas fa-search"></i><input id="game-search" class="f" type="search" placeholder="Search games..." oninput="onSearch(this.value)"></div>
-
-    <div id="offers-block" class="hidden">
-      <div class="sec-head"><h3><i class="fas fa-fire"></i> Hot Offers</h3><small>Limited time deals</small></div>
-      <div class="rail" id="offers-rail"></div>
-    </div>
-
-    <div class="chips" id="cat-chips"></div>
-    <div id="services-list" style="margin-top:10px"><div class="skel" style="height:150px"></div></div>
-
-    <div class="sec-head"><h3><i class="fas fa-bolt"></i> Latest Orders</h3><small>Live</small></div>
-    <div id="latest-orders-list"><div class="skel" style="height:64px"></div></div>
-
-    <div class="sec-head"><h3><i class="fas fa-headset"></i> Support &amp; Social</h3></div>
-    <div class="links" id="social-links"></div>
-
-    <div class="foot" id="foot-text">© 2026 MR TECHLABE STUDIO · All Rights Reserved</div>
-  </section>
-
-  <!-- ================= TOP-UP ================= -->
-  <section id="topup-sec" class="page hidden" style="padding-bottom:110px">
-    <div class="card gh" style="margin-bottom:12px">
-      <button class="back" onclick="history.back()"><i class="fas fa-arrow-left"></i></button>
-      <img id="tp-img" alt="" onerror="this.onerror=null;this.src='logo.png'">
-      <div style="min-width:0"><h2 id="tp-name">Game</h2><p id="tp-sub"></p></div>
-    </div>
-
-    <div class="card" style="margin-bottom:12px">
-      <div class="step"><b>1</b> Select package</div>
-      <div id="pk-grid" class="pk-grid"></div>
-    </div>
-
-    <div class="card" id="pid-card" style="margin-bottom:12px">
-      <div class="step"><b>2</b> Account info</div>
-      <label class="l">Player ID / UID</label>
-      <input class="f" id="player-id" type="text" inputmode="text" autocomplete="off" placeholder="Enter your Player ID">
-    </div>
-
-    <div class="card" style="margin-bottom:12px">
-      <div class="step"><b id="pay-step-n">3</b> Payment</div>
-
-      <!-- পেমেন্ট অপশন: Wallet Pay (ব্যালেন্স থেকে) / Instant Pay (পেমেন্ট করে নাম্বার + TrxID দিয়ে রিকোয়েস্ট) -->
-      <div class="methods" style="grid-template-columns:1fr 1fr;margin-bottom:14px">
-        <button id="pm-wallet" class="method on" style="--c:#8b5cf6;padding:20px 8px 16px" onclick="setPayMode('wallet')">
-          <i class="fas fa-wallet" style="font-size:32px;color:#c4b5fd"></i>
-          <span style="font-size:15px">Wallet Pay</span>
-          <small style="font-size:10.5px;font-weight:500;color:var(--mu)">Pay from your balance</small>
-        </button>
-        <button id="pm-offer" class="method" style="--c:#f59e0b;padding:20px 8px 16px" onclick="setPayMode('offer')">
-          <i class="fas fa-bolt" style="font-size:32px;color:#fcd34d"></i>
-          <span style="font-size:15px">Instant Pay</span>
-          <small style="font-size:10.5px;font-weight:500;color:var(--mu)">Send money &amp; submit TrxID</small>
-        </button>
-      </div>
-
-      <!-- ১) Wallet: আগের মতোই ব্যালেন্স থেকে কিনবে (নিচের Buy Now বাটন) -->
-      <div id="pm-wallet-view">
-        <div class="numrow" style="border-style:solid">
-          <div><small class="muted" style="font-size:11px">Wallet balance</small><div style="font-weight:800;font-size:18px">৳ <span id="tp-bal">0.00</span></div></div>
-          <button class="btn btn-ghost btn-sm" onclick="showSec('addmoney')"><i class="fas fa-plus"></i> Add money</button>
-        </div>
-      </div>
-
-      <!-- ২) Instant Pay: পেমেন্ট করে নাম্বার + TrxID দিয়ে সাবমিট করলে রিকোয়েস্ট অ্যাডমিনের কাছে যাবে -->
-      <div id="pm-req-view" class="stack hidden">
-
-        <!-- Instant Pay: প্যাকেজ সিলেক্ট করলে টাকার অ্যামাউন্ট অটো বসে যাবে -->
-        <div id="rq-offer-box">
-          <label class="l">Selected package</label>
-          <div class="numrow" style="border-style:solid">
-            <div style="min-width:0"><small class="muted" style="font-size:11px">Package</small><div id="rq-pkg-name" style="font-weight:700;font-size:14px">Select a package above</div></div>
-            <b>৳<span id="rq-pkg-price">0</span></b>
-          </div>
-        </div>
-
-        <div><label class="l">Payment method</label><div class="methods" id="rq-methods"><div class="skel" style="height:80px;grid-column:1/-1"></div></div></div>
-
-        <div id="rq-num-box" class="hidden">
-          <label class="l">Send money to this <span id="rq-mname">bKash</span> number</label>
-          <div class="numrow"><b class="mono" id="rq-num">—</b><button class="btn btn-ghost btn-sm" onclick="copyReqNum()"><i class="far fa-copy"></i> Copy</button></div>
-          <p id="rq-hint" class="muted" style="font-size:11.5px;margin-top:8px"></p>
-        </div>
-
-        <div><label class="l">Your payment number (sent from)</label><input class="f mono" id="rq-sender" type="tel" inputmode="tel" autocomplete="off" placeholder="01XXXXXXXXX"></div>
-        <div><label class="l">Transaction ID</label><input id="rq-trx" class="f mono" type="text" autocapitalize="characters" autocomplete="off" placeholder="e.g. 8N7A6D5E4C" style="text-transform:uppercase;letter-spacing:1px"></div>
-
-        <button class="btn btn-pri btn-block" onclick="submitReq()"><i class="fas fa-paper-plane"></i> Submit request</button>
-        <p class="muted" style="font-size:11.5px;text-align:center">Admin will verify your payment and complete the top-up. If rejected, the reason will appear in your notifications.</p>
-      </div>
-    </div>
-
-    <div class="card rules" id="rules-card">
-      <div class="step" style="margin-bottom:10px"><i class="fas fa-circle-info" style="color:var(--pri)"></i> Rules &amp; Conditions</div>
-      <div id="rules-text"></div>
-    </div>
-
-  </section>
-
-  <!-- ================= ADD MONEY ================= -->
-  <section id="addmoney-sec" class="page hidden">
-    <div class="sec-head" style="margin-top:4px"><h3><i class="fas fa-wallet"></i> Add Money</h3><small>Manual · approved by admin</small></div>
-
-    <div id="am-form" class="stack">
-      <div class="card">
-        <label class="l">Amount (৳)</label>
-        <div class="amt"><span>৳</span><input id="am-amount" class="f" type="number" inputmode="numeric" min="10" placeholder="0"></div>
-        <div class="quick">
-          <button onclick="setAmt(50)">50</button><button onclick="setAmt(100)">100</button><button onclick="setAmt(200)">200</button><button onclick="setAmt(500)">500</button><button onclick="setAmt(1000)">1000</button>
-        </div>
-      </div>
-      <div class="card">
-        <label class="l">Payment method</label>
-        <div class="methods" id="am-methods"><div class="skel" style="height:80px;grid-column:1/-1"></div></div>
-      </div>
-      <button class="btn btn-pri btn-block" onclick="goPay()">Continue <i class="fas fa-arrow-right"></i></button>
-      <div id="am-video" class="card hidden"><div class="step"><i class="fab fa-youtube" style="color:#f00"></i> How to add money</div><div class="vid"><iframe id="am-iframe" allowfullscreen loading="lazy"></iframe></div></div>
-    </div>
-
-    <div id="am-pay" class="hidden stack">
-      <button class="btn btn-ghost btn-sm" onclick="backToForm()"><i class="fas fa-arrow-left"></i> Back</button>
-      <div class="paybox" id="paybox">
-        <div class="hd"><img id="pb-logo" alt="" onerror="this.style.display='none'"><b id="pb-method">bKash</b><span style="font-size:12px;opacity:.9">Send <b style="display:inline;font-size:13px">৳<span id="pb-amt">0</span></b> via Send Money</span></div>
-        <div class="bd">
-          <label class="l">Send to this number</label>
-          <div class="numrow"><b class="mono" id="pb-num">—</b><button class="btn btn-ghost btn-sm" onclick="copyNum()"><i class="far fa-copy"></i> Copy</button></div>
-          <ol class="how">
-            <li>Open your <span class="pb-m">bKash</span> app or dial the USSD code.</li>
-            <li>Choose <b>Send Money</b> and enter the number above.</li>
-            <li>Send exactly <b>৳<span id="pb-amt2">0</span></b> and confirm with your PIN.</li>
-            <li>Copy the <b>Transaction ID</b> from the confirmation SMS and paste it below.</li>
-          </ol>
-        </div>
-      </div>
-      <div class="card">
-        <label class="l">Transaction ID</label>
-        <input id="am-trx" class="f mono" type="text" autocapitalize="characters" autocomplete="off" placeholder="e.g. 8N7A6D5E4C" style="text-transform:uppercase;letter-spacing:1px">
-        <button class="btn btn-pri btn-block" style="margin-top:12px" onclick="submitDeposit()"><i class="fas fa-paper-plane"></i> Submit for approval</button>
-        <p class="muted" style="font-size:11.5px;margin-top:10px;text-align:center">Your wallet is credited after an admin verifies the payment.</p>
-      </div>
-    </div>
-
-    <div class="sec-head"><h3><i class="fas fa-clock-rotate-left"></i> My Deposits</h3></div>
-    <div id="dep-list"><div class="empty"><i class="fas fa-receipt"></i>No deposits yet</div></div>
-  </section>
-
-  <!-- ================= HISTORY ================= -->
-  <section id="history-sec" class="page hidden">
-    <div class="sec-head" style="margin-top:4px"><h3><i class="fas fa-bag-shopping"></i> My Orders</h3></div>
-    <div id="history-list"><div class="skel" style="height:96px"></div></div>
-  </section>
-
-  <!-- ================= TUTORIAL ================= -->
-  <section id="tutorial-sec" class="page hidden">
-    <div class="sec-head" style="margin-top:4px"><h3><i class="fas fa-circle-play"></i> Tutorials</h3></div>
-    <div id="tutorial-list"><div class="skel" style="height:190px"></div></div>
-  </section>
-
-  <!-- ================= ACCOUNT ================= -->
-  <section id="account-sec" class="page hidden">
-    <div class="profile">
-      <!-- কভার ফটো (ফেসবুকের মতো): প্রোফাইল ফটোর পেছনে। ট্যাপ করলে নতুন কভার ফটো বসানো যাবে -->
-      <div class="cover" onclick="pickCover()">
-        <img id="acc-cover-img" class="hidden" alt="">
-        <span class="cover-cam"><i class="fas fa-camera"></i> Edit cover</span>
-      </div>
-      <input type="file" id="cover-file" accept="image/*" class="hidden">
-      <div class="pic" onclick="pickAvatar()" style="position:relative;cursor:pointer"><div id="acc-pic"><span id="acc-initial">U</span></div><span class="cam"><i class="fas fa-camera"></i></span></div>
-      <input type="file" id="avatar-file" accept="image/*" class="hidden">
-      <button class="btn btn-sm" style="background:var(--s2);border:1px solid var(--line);margin-top:12px;color:#ddd6fe" onclick="pickAvatar()"><i class="fas fa-image"></i> Change photo</button>
-      <h2 id="acc-name" style="margin-top:12px;font-size:18px">User</h2>
-      <p id="acc-email" class="muted" style="font-size:12px;margin-top:2px"></p>
-    </div>
-    <div class="bal-card">
-      <div><small>Available balance</small><b>৳ <span id="acc-bal">0.00</span></b></div>
-      <button class="btn btn-sm" style="background:#fff;color:#5b21b6" onclick="showSec('addmoney')"><i class="fas fa-plus"></i> Add</button>
-    </div>
-    <div class="stats">
-      <div class="stat"><b id="st-orders">0</b><small>Total orders</small></div>
-      <div class="stat"><b>৳ <span id="st-total">0</span></b><small>Total spent</small></div>
-      <div class="stat"><b>৳ <span id="st-week">0</span></b><small>Spent this week</small></div>
-      <div class="stat"><b id="st-pin" class="mono">------</b><small>Support PIN</small></div>
-    </div>
-    <div class="card" style="margin-top:14px">
-      <div class="rowi"><i class="fas fa-user"></i><div><small>Name</small><b id="inf-name">-</b></div></div>
-      <div class="rowi"><i class="fas fa-envelope"></i><div><small>Email</small><b id="inf-email">-</b></div></div>
-      <!-- মোবাইল নাম্বার পরিবর্তনের অপশন -->
-      <div class="rowi"><i class="fas fa-phone"></i><div style="flex:1;min-width:0"><small>Phone</small><b id="inf-phone">Not available</b></div><button class="btn btn-ghost btn-sm" onclick="editPhone()">Change</button></div>
-    </div>
-    <div class="links" style="margin-top:14px;grid-template-columns:repeat(4,1fr)">
-      <button class="lk" onclick="showSec('history')"><i class="fas fa-bag-shopping" style="color:#c4b5fd"></i>Orders</button>
-      <button class="lk" onclick="showSec('addmoney')"><i class="fas fa-wallet" style="color:#86efac"></i>Add Money</button>
-      <button class="lk" onclick="showSec('tutorial')"><i class="fas fa-circle-play" style="color:#fcd34d"></i>Tutorial</button>
-      <!-- Dev Info: লিংক script.js এর শুরুতে DEV_INFO_LINK এ বসাবে -->
-      <button class="lk" onclick="openDevInfo()"><i class="fas fa-user-tie" style="color:#c4b5fd"></i>Dev Info</button>
-    </div>
-    <button class="btn btn-ghost btn-block" style="margin-top:16px;color:#fca5a5" onclick="handleLogout()"><i class="fas fa-right-from-bracket"></i> Logout</button>
-  </section>
-
-  <div class="buybar" id="buybar">
-    <div class="t"><small id="bb-name">Select a package</small><b>৳ <span id="bb-price">0</span></b></div>
-    <button class="btn btn-pri" onclick="buyNow()"><i class="fas fa-bag-shopping"></i> Buy Now</button>
   </div>
 
-  <!-- ================= NAV ================= -->
-  <nav class="nav">
-    <button class="nav-btn on" data-sec="home" onclick="showSec('home')"><i class="fas fa-house"></i>Home</button>
-    <button class="nav-btn" data-sec="history" onclick="showSec('history')"><i class="fas fa-bag-shopping"></i>Orders</button>
-    <button class="nav-btn" data-sec="addmoney" onclick="showSec('addmoney')"><i class="fas fa-wallet"></i>Wallet</button>
-    <button class="nav-btn" data-sec="tutorial" onclick="showSec('tutorial')"><i class="fas fa-circle-play"></i>Tutorial</button>
-    <button class="nav-btn" data-sec="account" onclick="showSec('account')"><i class="fas fa-user"></i>Account</button>
+  <main class="container">
+
+    <!-- Adsterra native banner — placed once, outside every individual
+         page-view section, so it stays visible no matter which page
+         (Home/Categories/Downloads/Profile/etc.) is currently shown. -->
+    <div class="native-ad-slot">
+      <span class="native-ad-label">Sponsored</span>
+      <script async="async" data-cfasync="false" src="https://pl31405462.profitableratecpmnetwork.com/0a1073280d0977a6f3f56e3393d8b4bd/invoke.js"></script>
+      <div id="container-0a1073280d0977a6f3f56e3393d8b4bd"></div>
+    </div>
+
+    <!-- HOME VIEW -->
+    <section class="page-view show" id="view-home">
+      <div class="hero">
+        <div class="hero-card">
+          <div class="hero-eyebrow-free">Curated for Android</div>
+          <h1>Everything worth installing, in one place.</h1>
+          <p>Browse, preview, and download apps built for real everyday use.</p>
+        </div>
+      </div>
+
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input class="search-input" id="search-input" placeholder="Search apps, categories..." aria-label="Search apps">
+        <button class="search-clear" id="search-clear" aria-label="Clear search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div id="search-results-wrap" style="display:none;">
+        <div class="section-head"><h2>Search results</h2></div>
+        <div class="grid" id="search-results"></div>
+      </div>
+
+      <div id="home-sections">
+        <div class="chip-row" id="chip-row"></div>
+
+        <div class="section"><div class="section-head"><h2>Featured</h2></div><div class="rail" id="rail-featured"></div></div>
+        <div class="section"><div class="section-head"><h2>New Apps</h2></div><div class="rail" id="rail-new"></div></div>
+        <div class="section"><div class="section-head"><h2>Recently Updated</h2></div><div class="rail" id="rail-updated"></div></div>
+        <div class="section"><div class="section-head"><h2>Trending</h2></div><div class="rail" id="rail-trending"></div></div>
+        <div class="section"><div class="section-head"><h2>All Apps</h2></div><div class="grid" id="grid-all"></div></div>
+      </div>
+    </section>
+		<script src="https://pl31405461.profitableratecpmnetwork.com/0c/64/3e/0c643e1b095de2862201f38c0ba23e36.js"></script> <!-- social bar -->
+
+    <!-- HOST VIEW -->
+    <section class="page-view" id="view-host">
+      <h1 style="font-size:1.3rem;margin:22px 0 6px;">Host</h1>
+      <p style="color:var(--text-dim);font-size:0.86rem;margin-bottom:18px;">Useful links for hosting your app, Firebase, and app-posting resources — curated by the team.</p>
+      <div class="grid host-grid" id="host-grid"></div>
+    </section>
+
+    <!-- UPLOAD VIEW — developer account + apps + files (uploads stay pending until the admin approves) -->
+    <section class="page-view" id="view-upload">
+      <h1 style="font-size:1.3rem;margin:22px 0 6px;">Upload</h1>
+      <p style="color:var(--text-dim);font-size:0.86rem;margin-bottom:16px;">Anyone signed in can download. Uploading needs a developer account, and every upload goes live only after the admin approves it.</p>
+
+      <div class="up-off" id="dev-signin" hidden>Sign in to upload apps or files.</div>
+
+      <!-- DEVELOPER ACCOUNT -->
+      <div class="upload-form" id="dev-gate" hidden>
+        <div id="dev-step1">
+          <h2 class="dev-h">Create a developer account</h2>
+          <p class="dev-sub">Your name is shown on every app and file you upload.</p>
+          <div class="field"><label for="dv-name">Your name *</label><input id="dv-name" maxlength="60" placeholder="e.g. Rahim Studio" autocomplete="off"></div>
+          <div class="field"><label for="dv-wa">WhatsApp number *</label><input id="dv-wa" type="tel" inputmode="tel" maxlength="20" placeholder="+8801XXXXXXXXX" autocomplete="off"></div>
+          <div class="field"><label for="dv-email">Email *</label><input id="dv-email" type="email" maxlength="120" placeholder="you@example.com" autocomplete="off"></div>
+          <div class="auth-error" id="dv-error1"></div>
+          <button class="btn btn-primary btn-block" id="dv-continue">Continue</button>
+        </div>
+        <div id="dev-step2" hidden>
+          <h2 class="dev-h">Enter your code</h2>
+          <p class="dev-sub">The admin will send you a 6-digit code on WhatsApp or by email. Paste it below to finish creating your developer account.</p>
+          <div class="field"><label for="dv-code">6-digit code</label><input id="dv-code" inputmode="numeric" maxlength="6" placeholder="······" autocomplete="one-time-code" style="letter-spacing:6px;text-align:center;font-size:1.2rem;"></div>
+          <div class="auth-error" id="dv-error2"></div>
+          <button class="btn btn-primary btn-block" id="dv-verify">Create developer account</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="dv-back" style="margin-top:10px;">← Edit my details</button>
+        </div>
+      </div>
+
+      <div class="up-off" id="dev-blocked" hidden>Your developer account is blocked. Please contact the admin.</div>
+
+      <div id="up-main" hidden>
+        <div class="up-tabs" id="up-tabs">
+          <button type="button" class="up-tab active" data-up-tab="app">App</button>
+          <button type="button" class="up-tab" data-up-tab="file">File</button>
+        </div>
+        <div class="up-off" id="up-off" hidden></div>
+
+        <!-- APP -->
+        <div class="upload-form" id="up-app-form">
+          <div class="field"><label for="up-name">Name *</label><input id="up-name" maxlength="80" placeholder="e.g. QuickNotes"></div>
+          <div class="up-row2">
+            <div class="field"><label for="up-version">Version</label><input id="up-version" maxlength="30" placeholder="1.0.0"></div>
+            <div class="field"><label for="up-category">Category</label><input id="up-category" maxlength="40" placeholder="Productivity"></div>
+          </div>
+          <div class="field">
+            <label>Icon</label>
+            <div class="up-icon">
+              <img id="up-icon-prev" alt="" hidden>
+              <button type="button" class="btn btn-ghost btn-sm" id="up-icon-btn">Choose icon</button>
+              <input type="file" id="up-icon-file" accept="image/*" hidden>
+            </div>
+          </div>
+          <div class="field"><label for="up-desc">Description</label><textarea id="up-desc" rows="3" maxlength="1500" placeholder="What does it do?"></textarea></div>
+          <div class="field"><label for="up-notes">Update notes</label><textarea id="up-notes" rows="2" maxlength="800" placeholder="What's new in this version?"></textarea></div>
+          <div class="field"><label for="up-instr">Instructions</label><textarea id="up-instr" rows="2" maxlength="800" placeholder="How to install or open it"></textarea></div>
+          <div class="field">
+            <label for="up-type">Download type</label>
+            <select id="up-type">
+              <option value="direct_apk">Direct download (APK or any file)</option>
+              <option value="google_drive">Google Drive</option>
+              <option value="play_store">Google Play Store</option>
+            </select>
+          </div>
+          <div class="field"><label for="up-url" id="up-url-label">Direct download URL (APK or any file) *</label><input id="up-url" type="url" inputmode="url" placeholder="https://..."></div>
+          <div class="field">
+            <label>Screenshots (up to 5)</label>
+            <div class="up-shots" id="up-shots"></div>
+            <button type="button" class="btn btn-ghost btn-sm" id="up-shot-btn">Add screenshots</button>
+            <input type="file" id="up-shot-file" accept="image/*" multiple hidden>
+          </div>
+          <div class="auth-error" id="up-error"></div>
+          <button class="btn btn-primary btn-block" id="up-submit">Submit app for approval</button>
+        </div>
+
+        <!-- FILE -->
+        <div class="upload-form" id="up-file-form" hidden>
+          <div class="field">
+            <label>Choose any text-based file — its name and text fill in automatically</label>
+            <button type="button" class="btn btn-ghost btn-sm" id="fu-import-btn">Choose file</button>
+            <input type="file" id="fu-import" hidden>
+          </div>
+          <div class="field"><label for="fu-category">Category</label><input id="fu-category" list="fu-cats" maxlength="40" placeholder="e.g. Google Studio" autocomplete="off"><datalist id="fu-cats"></datalist></div>
+          <div class="field"><label for="fu-title">Display name *</label><input id="fu-title" maxlength="80" placeholder="e.g. Home page" autocomplete="off"></div>
+          <div class="field"><label for="fu-filename">File name</label><input id="fu-filename" maxlength="80" placeholder="e.g. index.html" autocomplete="off"></div>
+          <div class="field"><label for="fu-text">Text *</label><textarea id="fu-text" rows="9" placeholder="The text inside the file"></textarea></div>
+          <div class="field">
+            <label>ZIP password</label>
+            <div class="up-seg up-seg3">
+              <label><input type="radio" name="fu-pwmode" value="auto" checked><span> premium password </span></label>
+              <label><input type="radio" name="fu-pwmode" value="custom"><span>My password</span></label>
+              <label><input type="radio" name="fu-pwmode" value="none"><span>No password</span></label>
+            </div>
+            <p class="dev-sub" id="fu-pw-hint" style="margin:8px 0 0;"></p>
+          </div>
+          <div class="field" id="fu-pass-wrap" hidden><label for="fu-pass">Your password</label><input id="fu-pass" maxlength="64" placeholder="4–64 characters" autocomplete="off"></div>
+          <div class="auth-error" id="fu-error"></div>
+          <button class="btn btn-primary btn-block" id="fu-submit">Submit file for approval</button>
+        </div>
+
+        <h2 class="up-h2">My uploads</h2>
+        <div id="my-uploads"></div>
+
+        <h2 class="up-h2">Downloads of my files</h2>
+        <p class="dev-sub">Who downloaded your files, and the password generated for each person.</p>
+        <div id="dev-downloads"></div>
+      </div>
+    </section>
+
+    <!-- PROMPTS VIEW -->
+    <section class="page-view" id="view-prompts">
+      <h1 style="font-size:1.3rem;margin:22px 0 6px;">Prompts</h1>
+      <p style="color:var(--text-dim);font-size:0.86rem;margin-bottom:18px;">Ready-to-use prompts — tap Copy to grab one.</p>
+      <div class="grid prompt-grid" id="prompt-grid"></div>
+    </section>
+
+    <section class="page-view" id="view-files">
+      <h1 style="font-size:1.3rem;margin:22px 0 6px;">Files</h1>
+      <p style="color:var(--text-dim);font-size:0.86rem;margin-bottom:18px;">Open a category, edit the highlighted parts, then copy or download as a ZIP.</p>
+      <button class="btn btn-ghost btn-sm" data-view="upload" data-up-tab="file" style="margin-bottom:16px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0-4 4m4-4 4 4M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></svg>Upload a file</button>
+      <div class="grid prompt-grid" id="file-grid"></div>
+    </section>
+
+    <!-- CATEGORIES VIEW -->
+    <section class="page-view" id="view-categories">
+      <h1 style="font-size:1.3rem;margin:22px 0 16px;">Categories</h1>
+      <div class="chip-row" id="chip-row-2" style="margin-bottom:18px;"></div>
+      <div class="grid" id="grid-categories"></div>
+    </section>
+
+    <!-- DOWNLOADS VIEW -->
+    <section class="page-view" id="view-downloads">
+      <h1 style="font-size:1.3rem;margin:22px 0 16px;">My Downloads</h1>
+      <div id="downloads-list"></div>
+    </section>
+
+
+
+
+
+    <!-- PROFILE VIEW -->
+    <section class="page-view" id="view-profile">
+      <div style="margin:22px 0 16px;"></div>
+      <div class="profile-card" id="profile-card"></div>
+      <div class="menu-list" id="profile-menu"></div>
+    </section>
+
+    <!-- STATIC PAGES -->
+    <section class="page-view" id="view-privacy">
+      <a href="#" class="page-back" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>Back</a>
+      <h1>Privacy Policy</h1>
+      <p>Mr Techlab Studio ("we", "the app") respects your privacy. This policy explains what information we collect and how it is used.</p>
+      <h3>Information we collect</h3>
+      <ul>
+        <li>Account information from Google Sign-In or email/password authentication (name, email, profile photo).</li>
+        <li>Download history tied to your account: app name, version, and timestamp.</li>
+        <li>Basic usage analytics such as app views and download events, used to improve the catalog.</li>
+        <li>Local storage / cookies used only to keep you signed in and remember interface preferences.</li>
+      </ul>
+      <h3>How we use Firebase</h3>
+      <p>Authentication and data storage are provided by Firebase (Google). Firebase's own privacy practices apply to the underlying infrastructure.</p>
+      <h3>How information is used</h3>
+      <p>We use your data to operate your account, show your download history, and understand which apps are useful to visitors. We do not sell personal data to third parties.</p>
+      <h3>Data security</h3>
+      <p>Access to your account data is restricted to your authenticated session through Firebase security rules. No system is perfectly secure, and we encourage using a strong, unique password.</p>
+      <h3>Third-party services</h3>
+      <p>Downloaded apps are third-party software. We are not responsible for the privacy practices of the app developers themselves.</p>
+      <h3>Your rights</h3>
+      <p>You may request deletion of your account and associated data at any time by contacting us at the address on our Contact page.</p>
+      <p style="margin-top:16px;color:var(--text-faint);">[Company/owner legal name and address placeholder] — Last updated: <span id="privacy-date"></span></p>
+    </section>
+
+    <section class="page-view" id="view-terms">
+      <a href="#" class="page-back" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>Back</a>
+      <h1>Terms of Service</h1>
+      <h3>Using Mr Techlab Studio</h3>
+      <p>By using this website you agree to browse and download apps for personal, lawful use only.</p>
+      <h3>Accounts</h3>
+      <p>You are responsible for keeping your account credentials secure and for activity that happens under your account.</p>
+      <h3>Downloads and third-party apps</h3>
+      <p>Apps listed here are provided by third-party developers. We do not guarantee the performance, safety, or suitability of any app for your device, and installing any app is at your own discretion.</p>
+      <h3>Intellectual property</h3>
+      <p>App names, icons, and descriptions belong to their respective developers. The Mr Techlab Studio brand, layout, and original content belong to us.</p>
+      <h3>Availability</h3>
+      <p>We may update, suspend, or discontinue parts of the service at any time without notice.</p>
+      <h3>Limitation of liability</h3>
+      <p>Mr Techlab Studio is provided "as is" without warranties of any kind. We are not liable for damages arising from use of apps downloaded through the site.</p>
+      <h3>Contact</h3>
+      <p>Questions about these terms can be sent through our Contact page.</p>
+    </section>
+
+    <section class="page-view" id="view-about">
+      <a href="#" class="page-back" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>Back</a>
+      <h1>About Mr Techlab Studio</h1>
+      <p>Mr Techlab Studio is a marketplace for discovering Android apps — browse by category, preview screenshots and details, and download what's useful to you.</p>
+      <h3>What you'll find here</h3>
+      <p>A growing catalog of apps with clear version history, update notes, and installation instructions, kept current through our Firebase-backed catalog.</p>
+      <h3>Contact</h3>
+      <p>[Contact email placeholder] — see the Contact page for more ways to reach us.</p>
+      <p style="margin-top:10px;color:var(--text-faint);">Site version 1.0</p>
+    </section>
+
+    <section class="page-view" id="view-contact">
+      <a href="#" class="page-back" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>Back</a>
+      <h1>Contact</h1>
+      <p>Reach us through any of the channels below.</p>
+      <div class="menu-list" style="margin-top:16px;">
+        <div class="menu-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg> [Email placeholder]</div>
+        <div class="menu-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z"/></svg> [Telegram placeholder]</div>
+        <div class="menu-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"/></svg> [WhatsApp placeholder]</div>
+        <div class="menu-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/></svg> [Facebook placeholder]</div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer container">
+    <div class="brand" style="font-size:0.95rem;">Mr Techlab Studio</div>
+    <p style="margin-top:6px;color:var(--text-dim);font-size:0.85rem;">Premium Android App Marketplace</p>
+    <div class="footer-links">
+      <a href="#" data-view="home">Home</a>
+      <a href="#" data-view="host">Host</a>
+      <a href="#" data-view="prompts">Prompts</a>
+      <a href="#" data-page="privacy">Privacy Policy</a>
+      <a href="#" data-page="terms">Terms of Service</a>
+      <a href="#" data-page="about">About</a>
+      <a href="#" data-page="contact">Contact</a>
+    </div>
+    <p>© <span id="year"></span> Mr Techlab Studio. All rights reserved.</p>
+  </footer>
+
+  <!-- Adsterra 320x50 banner — fixed, shown on every page -->
+  <div class="ad-banner-bar">
+    <script type="text/javascript">
+      atOptions = {
+        'key' : 'c3447406b11d1c33694b3121ea2b21f0',
+        'format' : 'iframe',
+        'height' : 50,
+        'width' : 320,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highrevenueformat.com/c3447406b11d1c33694b3121ea2b21f0/invoke.js"></script>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-view="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Home</button>
+    <button class="nav-item" data-view="host"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><circle cx="7" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="7" cy="17" r="1" fill="currentColor" stroke="none"/></svg>Host</button>
+    <button class="nav-item" data-view="prompts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v12H8l-4 4V4Z"/><path d="M8 9h8M8 12.5h5"/></svg>Prompts</button>
+    <button class="nav-item" data-view="files"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Files</button>
+    <button class="nav-item" data-view="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4.5 5-6 8-6s6.5 1.5 8 6"/></svg>Profile</button>
   </nav>
 </div>
 
-<!-- notifications -->
-<div id="notif-ov" class="nov hidden" onclick="if(event.target===this)closeNotifs()">
-  <div class="nsheet">
-    <div class="nhead"><h4><i class="fas fa-bell"></i> Notifications</h4><button class="back" onclick="closeNotifs()"><i class="fas fa-xmark"></i></button></div>
-    <div id="notif-list" class="nbody"></div>
+<!-- ============ APP DETAIL SHEET ============ -->
+<div class="overlay" id="detail-overlay"></div>
+<div class="sheet" id="detail-sheet" role="dialog" aria-modal="true" aria-label="App details">
+  <div class="sheet-handle"></div>
+  <button class="icon-btn sheet-close" id="detail-close" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  <div class="sheet-scroll">
+    <div id="detail-hero"></div>
+    <!-- Ad inside the info area, right under the icon / name / version / category -->
+    <div class="detail-mid-ad">
+      <div class="detail-ad-slot">
+        <span class="native-ad-label">Sponsored</span>
+        <script type="text/javascript">
+          atOptions = {
+            'key' : '43c3fd7befc662a9e6392fec3dd3b7ce',
+            'format' : 'iframe',
+            'height' : 250,
+            'width' : 300,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/43c3fd7befc662a9e6392fec3dd3b7ce/invoke.js"></script>
+      </div>
+    </div>
+    <div id="detail-content"></div>
+
+    <!-- Static: script tags inside #detail-content's innerHTML never
+         execute, so the ad + its container has to live here instead. It's
+         still inside the same scrolling area as the description now, so it
+         sits at the very bottom — scroll down to reach it — instead of
+         staying pinned on screen. The button's label/icon and target app
+         are updated by openDetail(). -->
+    <div class="detail-dl-bar">
+      <div class="detail-ad-slot">
+        <span class="native-ad-label">Sponsored</span>
+        <script type="text/javascript">
+          atOptions = {
+            'key' : '43c3fd7befc662a9e6392fec3dd3b7ce',
+            'format' : 'iframe',
+            'height' : 250,
+            'width' : 300,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/43c3fd7befc662a9e6392fec3dd3b7ce/invoke.js"></script>
+      </div>
+      <div class="detail-ad-slot">
+        <span class="native-ad-label">Sponsored</span>
+        <script type="text/javascript">
+          atOptions = {
+            'key' : '43c3fd7befc662a9e6392fec3dd3b7ce',
+            'format' : 'iframe',
+            'height' : 250,
+            'width' : 300,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/43c3fd7befc662a9e6392fec3dd3b7ce/invoke.js"></script>
+      </div>
+      <button class="btn btn-primary btn-block" id="detail-dl-btn"></button>
+    </div>
   </div>
 </div>
 
-<!-- blocked account lock screen -->
-<div id="block-ov" class="blk hidden">
-  <div class="blk-in">
-    <div class="blk-ic"><i class="fas fa-ban"></i></div>
-    <h2>Account blocked</h2>
-    <p class="muted" style="font-size:13px;margin-top:6px">Your account has been blocked by the admin.</p>
-    <div class="blk-reason"><small>Reason</small><b id="block-reason"></b></div>
-    <p class="muted" style="font-size:12px;margin:16px 0 10px">Need help? Contact support</p>
-    <div class="blk-btns" id="block-links"></div>
-    <button class="btn btn-sm" style="margin-top:18px;background:var(--s2);border:1px solid var(--line);color:#ddd6fe" onclick="handleLogout()"><i class="fas fa-right-from-bracket"></i> Logout</button>
+<!-- ============ LOGIN GATE MODAL ============ -->
+<div class="overlay" id="gate-overlay"></div>
+<div class="gate-modal" id="gate-modal" role="dialog" aria-modal="true">
+  <div class="gate-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+  <h3>Sign in to download</h3>
+  <p>Create a free account or continue with Google to download apps from Mr Techlab Studio.</p>
+  <div class="auth-stack">
+    <button class="btn btn-primary btn-block" id="gate-google">
+      <svg viewBox="0 0 48 48" width="19" height="19"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.5 6 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.7 18.9 13 24 13c3.1 0 5.8 1.1 8 3l5.7-5.7C34.5 6.7 29.5 4.5 24 4.5c-7.4 0-13.8 4.2-17.7 10.2z"/><path fill="#4CAF50" d="M24 44c5.4 0 10.3-2.1 14-5.4l-6.5-5.5c-2 1.5-4.6 2.4-7.5 2.4-5.3 0-9.7-3.4-11.3-8.1l-6.6 5.1C9.9 39.6 16.4 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.5l6.5 5.5C40.9 36.4 44 30.7 44 24c0-1.2-.1-2.3-.4-3.5z"/></svg>
+      Continue with Google
+    </button>
+    <button class="btn btn-ghost btn-block" id="gate-email">Sign in with Email</button>
+    <button class="btn btn-ghost btn-block btn-sm" id="gate-cancel">Cancel</button>
   </div>
 </div>
 
-<script src="script.js"></script>
+<div id="toast-host"></div>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function () {});
+    });
+  }
+</script>
+<script type="module" src="script.js"></script>
 </body>
 </html>
